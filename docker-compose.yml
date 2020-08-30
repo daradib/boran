@@ -1,0 +1,9 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: /code/run.sh
+    volumes:
+      - ./data:/code/data
+    network_mode: "host"
+    restart: always

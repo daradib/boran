@@ -1,0 +1,17 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}500 Internal Server Error{% endblock %}
+
+{% block content %}
+<h1>500 Internal Server Error</h1>
+<p>Our team has been notified.</p>
+
+{% if sentry_event_id %}
+  <p>Error ID: {{ sentry_event_id }}</p>
+  <script src="https://browser.sentry-cdn.com/5.22.3/bundle.min.js" integrity="sha384-A1qzcXXJWl+bzYr+r8AdFzSaLbdcbYRFmG37MEDKr4EYjtraUyoZ6UiMw31jHcV9" crossorigin="anonymous"></script>
+  <script>
+    Sentry.init({ dsn: '{{ sentry_dsn }}' });
+    Sentry.showReportDialog({ eventId: '{{ sentry_event_id }}' });
+  </script>
+{% endif %}
+{% endblock %}
