@@ -41,7 +41,7 @@ def api_view(request, id=None):
             voter = Voter.objects.select_for_update().get(id=id)
         else:
             voter = Voter.objects.select_for_update().filter(
-                provided_to__isnull=True, statename='PA',
+                provided_to__isnull=True,
             ).exclude(
                 anyphone__exact='', landphone__exact='',
                 report_cellphone__exact='', niac_cellphone__exact='',
