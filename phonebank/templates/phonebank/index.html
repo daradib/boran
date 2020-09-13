@@ -54,10 +54,10 @@
                 <div id="similar_voters">
                 </div>
                 <span class="pull-right">
-                  <button type="button" class="btn btn-secondary" onclick="makeCall('+19252590082')">Echo test
+                  <button type="button" class="btn btn-secondary" onclick="makeCall('+19252590082')" id="echo" disabled="true">Echo test
                     <i class="fa fa-phone" aria-hidden="true"></i>
                   </button>
-                  <button type="button" class="btn btn-primary" onclick="getContact()" id="getContact">New contact
+                  <button type="button" class="btn btn-primary" onclick="getContact()" id="getContact" disabled="true">New contact
                     <i class="fa fa-user-plus" aria-hidden="true"></i>
                   </button>
                 </span>
@@ -266,6 +266,8 @@
 
       $(document).ready(function() {
         telnyxConnect();
+        $('#echo').attr('disabled', false);
+        $('#getContact').attr('disabled', false);
       });
     </script>
   </body>
