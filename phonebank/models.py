@@ -74,6 +74,7 @@ class Voter(models.Model):
             'statename': self.statename,
             'name':
                 ' '.join([self.name_first, self.name_middle, self.name_last]),
+            'provided': bool(self.provided_to_id),
         }
         obj['phones'] = ({k: v.as_e164 for k, v in self.map_phones().items()})
         return obj

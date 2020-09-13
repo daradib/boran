@@ -143,7 +143,11 @@
           if (api.similar_voters.length != 0) {
             $('#similar_voters').html('<div class="alert alert-info" role="alert"><p>There are other voters with overlapping phone numbers:</p><ul></ul></div>');
             for (voter of api.similar_voters) {
-              $('#similar_voters ul').append('<li><a href="javascript:getContact(' + voter.id + ')">' + voter.name + '</a></li>');
+              if (voter.provided) {
+                $('#similar_voters ul').append('<li><strike><a href="javascript:getContact(' + voter.id + ')">' + voter.name + '</a></strike></li>');
+              } else {
+                $('#similar_voters ul').append('<li><a href="javascript:getContact(' + voter.id + ')">' + voter.name + '</a></li>');
+              }
             }
           } else  {
             $('#similar_voters').html('');
