@@ -22,7 +22,9 @@ def phonebank_view(request):
     try:
         agent = get_agent(request)
     except KeyError as e:
-        return HttpResponse(e, status=403)
+        return HttpResponse(e, status=401)
+    if not agent.is_active:
+        return HttpResponse('Key is no longer active', status=403)
     return render(request, 'phonebank/index.html', {
         'google_form_url': settings.SECRETS['GOOGLE_FORM_URL'],
         'jitsi_room': agent.room_name,
