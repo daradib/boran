@@ -71,8 +71,8 @@
                 </button>
               </h5>
               <div class="card-body">
-                <div class="alert alert-secondary d-none" role="alert">
-                  <pre><code id="callLog"></code></pre>
+                <div class="alert alert-secondary" role="alert" id="callLogContainer">
+                  <code class="d-none" id="callLog"></code>
                 </div>
                 <audio id="audioCall" autoPlay="autoplay"/>
               </div>
@@ -227,8 +227,8 @@
             $('#callStatus').text('');
             break;
         }
-        if (typeof call.cause != 'undefined' && call.cause != 'NORMAL_CLEARING') {
-          $('#callLog').removeClass('d-none')
+        if (typeof call.cause != 'undefined' && call.cause != 'NORMAL_CLEARING' && call.cause != 'DESTROY') {
+          $('#callLogContainer').removeClass('d-none')
           $('#callLog').append(call.cause + ' (' + call.sipCode + ' ' + call.sipReason + ')\n');
         }
       }
@@ -251,7 +251,7 @@
         $('#phone' + phone.substring(1)).addClass('text-muted');
         $('#callInfo').removeClass('d-none');
         $('#callLog').html('');
-        $('#callLog').addClass('d-none');
+        $('#callLogContainer').addClass('d-none');
         currentCall = telnyxClient.newCall(params);
         $('#getContact').attr('disabled', true);
         $('#hangupCall').removeClass('d-none');
