@@ -33,7 +33,7 @@
     <main role="main" class="container-fluid">
       <div class="alerts"></div>
       <div class="row">
-          <div class="col">
+          <div class="col" id="formContainer">
             <iframe id="form" src="{{ google_form_url }}?usp=pp_url&embedded=true" width="100%" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
           </div>
           <div class="col-lg-3 col-md-4 col-sm-5">
@@ -146,7 +146,13 @@
           } else  {
             $('#similar_voters').html('');
           }
-          $("#form").attr("src", '{{ google_form_url }}?usp=pp_url&entry.391576799=' + api.voter.id + '&entry.1578854864=' + encodeURIComponent(Object.values(api.voter.phones).join(',')) + '&entry.1498627907=' + key + '&embedded=true');
+          // When changing the iframe src or location.href, if there are
+          // unsaved changes in the form, onbeforeunload will trigger an alert
+          // about leaving the site. If this alert is canceled by the user, the
+          // form will erroneously remain filled with the previous voter.
+          // So to preempt this alert, we overwrite the entire iframe element.
+          $("#formContainer").html('<iframe id="form" src="' + '{{ google_form_url }}?usp=pp_url&entry.391576799=' + api.voter.id + '&entry.1578854864=' + encodeURIComponent(Object.values(api.voter.phones).join(',')) + '&entry.1498627907=' + key + '&embedded=true' + '" width="100%" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>');
+          $('#form').css('height', $(window).height() - 100);
         });
         if (typeof telnyxClient == 'undefined' || telnyxClient.connected != true) {
           telnyxConnect();
