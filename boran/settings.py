@@ -11,7 +11,8 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # Load the secret key if possible, otherwise generate one.
 secret_filename = BASE_DIR / 'data/secrets.json'
 try:
-    SECRETS = json.load(open(secret_filename))
+    with open(secret_filename) as f:
+        SECRETS = json.load(f)
     SECRET_KEY = SECRETS['SECRET_KEY']
 except Exception:
     SECRET_KEY = get_random_string(50)
@@ -125,6 +126,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 LOGIN_URL = '/admin/login/'
 LOGOUT_URL = '/admin/logout/'

@@ -1,9 +1,9 @@
-from django.conf.urls import url
+from django.urls import path
 
 from phonebank import views
 
 urlpatterns = [
-    url(r'^$', views.phonebank_view, name='index'),
-    url(r'^api/voter/$', views.api_view),
-    url(r'^api/voter/(?P<id>\w+)/$', views.api_view),
+    path('', views.phonebank_view, name='index'),
+    path('api/voter/', views.api_view),
+    path('api/voter/<int:id>/', views.api_view),
 ]

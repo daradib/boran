@@ -1,14 +1,13 @@
 from django.conf import settings
-from django.conf.urls import include, url
 from django.contrib import admin
 from django.shortcuts import render
-from django.urls import path
+from django.urls import include, path
 from sentry_sdk import last_event_id
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^phonebank/', include('phonebank.urls'), name='phonebank'),
+    path('phonebank/', include('phonebank.urls'), name='phonebank'),
 ]
 
 
