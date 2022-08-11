@@ -4,7 +4,6 @@ from pathlib import Path
 from django.utils.crypto import get_random_string
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
-import telnyx
 
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -36,9 +35,6 @@ if 'SENTRY_DSN' in SECRETS:
         integrations=[DjangoIntegration()],
         traces_sample_rate=0.01,
     )
-
-if 'TELNYX_API_KEY' in SECRETS:
-    telnyx.api_key = SECRETS['TELNYX_API_KEY']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
