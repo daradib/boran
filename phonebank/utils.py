@@ -1,10 +1,9 @@
 from urllib.parse import quote_plus
 
+from django.apps import apps
 from django.conf import settings
 import requests
 import telnyx
-
-from phonebank.models import Agent, TelnyxCredential
 
 
 if 'TELNYX_API_KEY' in settings.SECRETS:
@@ -32,22 +31,43 @@ def create_telnyx_token(credential_id):
     return response.text
 
 
-def fetch_telnyx_tokens(agents=None):
-    if agents is None:
-        agents = Agent.objects.filter(is_active=True)
-    for agent in agents:
+def fetch_telnyx_token(agent):
+    if not agent.is_active:
+        return
+    if agent.telnyx_credential is None:
         response = telnyx.TelephonyCredential.create(
             connection_id=settings.SECRETS['TELNYX_CONNECTION_ID'],
         )
-        credential_id = response['id']
-        token = create_telnyx_token(credential_id)
-        telnyx_credential = TelnyxCredential(
-            id=credential_id, token=token, agent=agent,
+        telnyx_credential = apps.get_model('phonebank.TelnyxCredential')(
+            id=response['id'], agent=agent,
         )
-        telnyx_credential.save()
+    else:
+        telnyx_credential = agent.telnyx_credential
+    telnyx_credential.token = create_telnyx_token(telnyx_credential.id)
+    telnyx_credential.save()
+    return telnyx_credential.token
 
 
-def delete_telnyx_tokens():
+def fetch_telnyx_tokens(agents=None):
+    if agents is None:
+        agents = apps.get_model('phonebank.Agent').objects.filter(
+            is_active=True,
+        )
+    for agent in agents:
+        fetch_telnyx_token(agent)
+
+
+def delete_telnyx_credential(credential_id):
+    telnyx_credential = telnyx.TelephonyCredential.retrieve(credential_id)
+    try:
+        telnyx_credential.delete()
+    except telnyx.error.APIError as e:
+        # Raise errors other than HTTP 204, which appears intentional.
+        if 'HTTP response code was 204' not in e.user_message:
+            raise
+
+
+def delete_telnyx_credentials():
     telnyx_credentials = telnyx.TelephonyCredential.list(page={'size': 250})
     if telnyx_credentials.data:
         for telnyx_credential in telnyx_credentials.auto_paging_iter():
@@ -57,4 +77,4 @@ def delete_telnyx_tokens():
                 # Raise errors other than HTTP 204, which appears intentional.
                 if 'HTTP response code was 204' not in e.user_message:
                     raise
-    TelnyxCredential.objects.all().delete()
+    apps.get_model('phonebank.TelnyxCredential').objects.all().delete()

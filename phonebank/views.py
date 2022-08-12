@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.utils.timezone import now
 
 from phonebank.models import Agent, Voter
+from phonebank.utils import fetch_telnyx_token
 
 
 def get_agent(request):
@@ -29,7 +30,7 @@ def phonebank_view(request):
         'google_form_url': settings.SECRETS['GOOGLE_FORM_URL'],
         'jitsi_room': agent.room_name,
         'sentry_dsn': settings.SECRETS['SENTRY_DSN'],
-        'telnyx_token': agent.telnyx_token
+        'telnyx_token': fetch_telnyx_token(agent)
     })
 
 

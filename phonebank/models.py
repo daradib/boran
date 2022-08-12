@@ -2,6 +2,8 @@ from django.db import models
 from localflavor.us.models import USStateField
 from phonenumber_field.modelfields import PhoneNumberField
 
+from phonebank.utils import delete_telnyx_credential
+
 
 class Room(models.Model):
     name = models.SlugField(unique=True)
@@ -28,10 +30,10 @@ class Agent(models.Model):
             return ''
 
     @property
-    def telnyx_token(self):
+    def telnyx_credential(self):
         return TelnyxCredential.objects.filter(
             agent=self
-        ).values('token').last()['token']
+        ).last()
 
     def __str__(self):
         return "{} ({})".format(self.uuid, self.nickname)
@@ -43,6 +45,10 @@ class TelnyxCredential(models.Model):
     agent = models.ForeignKey(
         Agent, null=True, blank=True, on_delete=models.SET_NULL
     )
+
+    def delete(self, *args, **kwargs):
+        delete_telnyx_credential(self.id)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.id

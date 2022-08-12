@@ -24,7 +24,13 @@ class RoomAdmin(admin.ModelAdmin):
 
 @admin.register(TelnyxCredential)
 class TelnyxCredentialAdmin(admin.ModelAdmin):
-    pass
+
+    def delete_queryset(self, request, queryset):
+        # Delete selected objects individually instead of in bulk
+        # in order to call the model's delete method, which deletes
+        # the credential through the Telnyx API.
+        for telnyx_credential in queryset:
+            telnyx_credential.delete()
 
 
 class VoterResource(resources.ModelResource):
