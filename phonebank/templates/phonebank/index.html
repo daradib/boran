@@ -51,7 +51,8 @@
                 <div id="similar_voters">
                 </div>
                 <span class="pull-right">
-                  <button type="button" class="btn btn-secondary" onclick="makeCall('+19252590082')" id="echo" disabled="true">Echo test
+                  <!-- Another echo test SIP URI address is sip:4444@sip2sip.info -->
+                  <button type="button" class="btn btn-secondary" onclick="makeCall('sip:echo@iptel.org')" id="echo" disabled="true">Echo test
                     <i class="fa fa-phone" aria-hidden="true"></i>
                   </button>
                   <button type="button" class="btn btn-primary" onclick="getContact()" id="getContact" disabled="true">New contact
@@ -255,7 +256,9 @@
           destinationNumber: phone,
           audio: 1,
         };
-        $('#phone' + phone.substring(1)).addClass('text-muted');
+        if (phone[0] == '+') {
+          $('#phone' + phone.substring(1)).addClass('text-muted');
+        }
         $('#callInfo').removeClass('d-none');
         $('#callLog').html('');
         $('#callLogContainer').addClass('d-none');
