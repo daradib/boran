@@ -41,25 +41,17 @@ def api_view(request, id=None):
         return HttpResponse(e, status=403)
     with transaction.atomic():
         if id:
-            voter = Voter.objects.select_for_update().get(id=id)
+            voter = Voter.objects.select_for_update().get(
+                id=id,
+            )
         else:
             voter = Voter.objects.select_for_update().filter(
                 provided_to__isnull=True,
-            ).exclude(
-                anyphone__exact='', landphone__exact='',
-                report_cellphone__exact='', niac_cellphone__exact='',
-            ).order_by('?').first()
+            ).order_by('-priority', '?').first()
         voter.provided_to = agent
         voter.provided_at = now()
         voter.save()
-    phone_numbers = set(voter.map_phones().values())
-    similar_voters = (
-        Voter.objects.filter(anyphone__in=phone_numbers)
-        | Voter.objects.filter(landphone__in=phone_numbers)
-        | Voter.objects.filter(report_cellphone__in=phone_numbers)
-        | Voter.objects.filter(niac_cellphone__in=phone_numbers)
-    ).exclude(id=voter.id)
     return JsonResponse({
         'voter': voter.to_dict(),
-        'similar_voters': [v.to_dict() for v in similar_voters]
+        'similar_voters': [v.to_dict() for v in voter.find_similar_voters()]
     })

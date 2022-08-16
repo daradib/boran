@@ -1,5 +1,8 @@
+import html
+
 from django.db import models
 from localflavor.us.models import USStateField
+import markdown
 from phonenumber_field.modelfields import PhoneNumberField
 
 from phonebank.utils import delete_telnyx_credential
@@ -55,37 +58,80 @@ class TelnyxCredential(models.Model):
 
 
 class Voter(models.Model):
+    id = models.SlugField(primary_key=True)
     statename = USStateField()
     name_last = models.CharField(max_length=127)
     name_first = models.CharField(max_length=127)
     name_middle = models.CharField(max_length=127, blank=True)
-    anyphone = PhoneNumberField(blank=True, db_index=True)
-    landphone = PhoneNumberField(blank=True, db_index=True)
-    report_cellphone = PhoneNumberField(blank=True, db_index=True)
-    niac_cellphone = PhoneNumberField(blank=True, db_index=True)
+    cell_phone_1 = PhoneNumberField(blank=True, db_index=True)
+    cell_phone_2 = PhoneNumberField(blank=True, db_index=True)
+    land_phone_1 = PhoneNumberField(blank=True, db_index=True)
+    land_phone_2 = PhoneNumberField(blank=True, db_index=True)
+    notes = models.TextField(blank=True)
+    priority = models.SmallIntegerField(default=0, db_index=True)
     provided_to = models.ForeignKey(
         Agent, null=True, blank=True, on_delete=models.SET_NULL
     )
     provided_at = models.DateTimeField(null=True, blank=True)
 
+    @classmethod
+    def get_phone_field_names(cls):
+        return [
+            f.name for f in cls._meta.get_fields()
+            if isinstance(f, PhoneNumberField) and getattr(cls, f.name)
+        ]
+
     def map_phones(self):
         return {
-            f.name: getattr(self, f.name) for f in self._meta.get_fields()
-            if isinstance(f, PhoneNumberField) and getattr(self, f.name)
+            f: getattr(self, f) for f in self.get_phone_field_names()
+            if getattr(self, f)
         }
+
+    def format_notes(self):
+        formatted_notes = ""
+        for line in self.notes.splitlines():
+            if formatted_notes:
+                formatted_notes += "\n"
+            if line.startswith("https://"):
+                formatted_notes += \
+                    '<a href="{}" rel="noreferrer" target="_blank">'.format(
+                        html.escape(line)
+                    ) \
+                    + 'More Info ' \
+                    + '<i class="fa fa-external-link" aria-hidden="true">' \
+                    + '</i></a>'
+            else:
+                formatted_notes += line.replace(' ', '&nbsp;')
+        return markdown.markdown(formatted_notes, extensions=['nl2br'])
+
+    def find_similar_voters(self):
+        phone_numbers = set(self.map_phones().values())
+        query = None
+        for phone_field_name in self.get_phone_field_names():
+            if query:
+                query.add(
+                    models.Q(**{phone_field_name + '__in': phone_numbers}),
+                    models.Q.OR,
+                )
+            else:
+                query = models.Q(**{phone_field_name + '__in': phone_numbers})
+        return Voter.objects.filter(query).exclude(id=self.id).order_by(
+            'name_last', 'name_first', 'id',
+        )
+
+    def to_name(self):
+        return self.name_last + ', ' + self.name_first
 
     def to_dict(self):
         obj = {
             'id': self.id,
             'statename': self.statename,
-            'name':
-                ' '.join([self.name_first, self.name_middle, self.name_last]),
+            'name': self.to_name(),
+            'notes': self.format_notes(),
             'provided': bool(self.provided_to_id),
         }
         obj['phones'] = ({k: v.as_e164 for k, v in self.map_phones().items()})
         return obj
 
     def __str__(self):
-        return '{}: {}, {} {}'.format(
-            self.statename, self.name_last, self.name_first, self.name_middle,
-        )
+        return '{}: {}'.format(self.id, self.to_name())

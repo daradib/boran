@@ -25,9 +25,7 @@ with open(sys.argv[1]) as csvfile:
             continue
         for column_name in ['name_last', 'name_first', 'name_middle']:
             obj[column_name] = row[column_name]
-        for column_name in [
-            'anyphone', 'landphone', 'report_cellphone', 'niac_cellphone'
-        ]:
+        for column_name in Voter.get_phone_field_names():
             if row[column_name]:
                 phone = phonenumbers.parse(row[column_name], 'US')
                 if phonenumbers.is_valid_number_for_region(phone, 'US'):

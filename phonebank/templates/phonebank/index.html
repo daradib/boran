@@ -39,10 +39,12 @@
           <div class="col" id="formContainer">
             <iframe id="form" src="{{ google_form_url }}?usp=pp_url&embedded=true" width="100%" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
           </div>
-          <div class="col-lg-3 col-md-4 col-sm-5">
+          <div class="col-lg-4 col-md-5 col-sm-6">
             <div class="card">
-              <h5 class="card-header"><span id="name"></span><span class="pull-right"><small class="text-muted"><span id="id"></span><br/><span id="statename"></span></small></span></h5>
+              <h5 class="card-header"><span id="name"></span><span class="pull-right"><small class="text-muted"><span id="id"></span> <span id="statename"></span></small></span></h5>
               <div class="card-body">
+                <div class="small" id="notes" style="font-family: monospace">
+                </div>
                 <div id="phones">
                   <div class="alert alert-primary" role="alert">
                     Before continuing, please place an echo test call to verify that your headphones and microphone are working correctly. You should be able to hear yourself speak once the call is active.
@@ -125,10 +127,9 @@
           $('#name').text(api.voter.name);
           $('#id').text('#' + api.voter.id);
           $('#statename').text(api.voter.statename);
+          $('#notes').html(api.voter.notes);
           $('#phones').html('<ul class="nav nav-pills"></ul>');
-          var phonetypes = Object.keys(api.voter.phones);
-          phonetypes.reverse();
-          for (phonetype of phonetypes) {
+          for (phonetype of Object.keys(api.voter.phones)) {
             const phone = api.voter.phones[phonetype];
             var icon;
             if (phonetype.includes('cell')) {
