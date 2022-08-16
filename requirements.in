@@ -1,6 +1,7 @@
 django>=3.2,<3.3
 django-import-export
 django-localflavor>=2.1
+django-mass-edit>=3.2
 django-phonenumber-field>=2.3
 gunicorn
 phonenumberslite

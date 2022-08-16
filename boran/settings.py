@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'import_export',
+    'massadmin',
     'phonenumber_field',
     'phonebank',
 ]

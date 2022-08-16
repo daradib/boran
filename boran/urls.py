@@ -6,6 +6,7 @@ from sentry_sdk import last_event_id
 
 
 urlpatterns = [
+    path('admin/', include('massadmin.urls')),
     path('admin/', admin.site.urls),
     path('phonebank/', include('phonebank.urls'), name='phonebank'),
 ]
