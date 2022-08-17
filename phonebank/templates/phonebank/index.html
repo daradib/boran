@@ -22,12 +22,11 @@
       <a class="navbar-brand" href="">Phonebank</a>
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
+          {% for nav_link in nav_links %}
           <li class="nav-item">
-            <a class="nav-link" href="https://docs.google.com/document/d/1XDBtHiGwppDovAMdAyW_W1tR-PDALvImGAPdtaVv0gE/view" target="_blank">General FAQ and Persian</a>
+            <a class="nav-link" href="{{ nav_link.url }}" target="_blank">{{ nav_link.name }}</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="https://docs.google.com/document/d/1NdoR7YARk0SZ_U_DRO0kay_ZlLStKJhMKqAxU-n_Mi0/view" target="_blank">Boran FAQ</a>
-          </li>
+          {% endfor %}
         </ul>
       <a href="https://en.wikipedia.org/wiki/Boran" target="_blank"><img class="pull-right" src="{% static 'boran.png' %}" height="25px"/></a>
       </div>

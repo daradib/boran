@@ -27,6 +27,7 @@ def phonebank_view(request):
     if not agent.is_active:
         return HttpResponse('Key is no longer active', status=403)
     return render(request, 'phonebank/index.html', {
+        'nav_links': settings.SECRETS['NAV_LINKS'],
         'google_form_url': settings.SECRETS['GOOGLE_FORM_URL'],
         'jitsi_room': agent.room_name,
         'sentry_dsn': settings.SECRETS['SENTRY_DSN'],
