@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.utils.timezone import now
 
 from phonebank.models import Agent, Voter
-from phonebank.utils import fetch_telnyx_token
+from phonebank.utils import fetch_telnyx_token, register_telnyx_call
 
 
 def get_agent(request):
@@ -51,6 +51,8 @@ def api_view(request, id=None):
         voter.provided_to = agent
         voter.provided_at = now()
         voter.save()
+    for phone in voter.map_phones().values():
+        register_telnyx_call(phone)
     return JsonResponse({
         'voter': voter.to_dict(),
         'similar_voters': [v.to_dict() for v in voter.find_similar_voters()]
