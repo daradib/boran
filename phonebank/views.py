@@ -29,6 +29,7 @@ def phonebank_view(request):
     return render(request, 'phonebank/index.html', {
         'nav_links': settings.SECRETS['NAV_LINKS'],
         'google_form_url': settings.SECRETS['GOOGLE_FORM_URL'],
+        'jitsi_server': settings.SECRETS['JITSI_SERVER'],
         'jitsi_room': agent.room_name,
         'sentry_dsn': settings.SECRETS['SENTRY_DSN'],
         'telnyx_token': fetch_telnyx_token(agent)

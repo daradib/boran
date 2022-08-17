@@ -99,9 +99,9 @@
     <script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.11/bundle/libphonenumber-js.min.js" integrity="sha256-HB3oWyA6tmtTM24uD4Iv2cPtEcX/y36ieUUJwH+/rUA=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/webrtc-adapter@8.1.1/out/adapter.js" integrity="sha256-+z8EmcYtf4ugdi3iOIJibDJP+3yGdUouYYf9Onucc+Q=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@telnyx/webrtc@2.8.1/lib/bundle.js" integrity="sha256-GKDoKuxCI5XHsnaAqdAkU1QB70r0sTN/Q6pg3mg1BHI=" crossorigin="anonymous"></script>
-    <script src="https://meet.boran.quietapple.org/external_api.js"></script>
+    <script src="https://{{ jitsi_server }}/external_api.js"></script>
     <script>
-      const domain = 'meet.boran.quietapple.org';
+      const domain = '{{ jitsi_server }}';
       const room = '{{ jitsi_room }}';
       var jitsiApi;
       if(room) {
