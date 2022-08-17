@@ -31,6 +31,7 @@ def phonebank_view(request):
         'google_form_url': settings.SECRETS['GOOGLE_FORM_URL'],
         'jitsi_server': settings.SECRETS['JITSI_SERVER'],
         'jitsi_room': agent.room_name,
+        'agent_name': agent.nickname,
         'sentry_dsn': settings.SECRETS['SENTRY_DSN'],
         'telnyx_token': fetch_telnyx_token(agent)
     })

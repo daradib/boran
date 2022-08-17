@@ -109,7 +109,8 @@
             roomName: '{{ jitsi_room }}',
             height: $(window).height() - 100,
             parentNode: document.querySelector('#meet'),
-            configOverwrite: {startWithAudioMuted: true, startWithVideoMuted: true}
+            configOverwrite: {startWithAudioMuted: true, startWithVideoMuted: true},
+            userInfo: {displayName: '{{ agent_name }}'},
         };
         jitsiApi = new JitsiMeetExternalAPI(domain, options);
       } else {
