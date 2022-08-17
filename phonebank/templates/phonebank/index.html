@@ -280,6 +280,12 @@
         $('#echo').attr('disabled', false);
         $('#getContact').attr('disabled', false);
       });
+
+      $(document).keydown(function(e) {
+        if (currentCall != null && !e.originalEvent.repeat && "0123456789#*".includes(e.key)) {
+          currentCall.dtmf(e.key);
+        }
+      });
     </script>
   </body>
 </html>
