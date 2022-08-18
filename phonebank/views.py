@@ -24,8 +24,6 @@ def phonebank_view(request):
         agent = get_agent(request)
     except KeyError as e:
         return HttpResponse(e, status=401)
-    if not agent.is_active:
-        return HttpResponse('Key is no longer active', status=403)
     return render(request, 'phonebank/index.html', {
         'nav_links': settings.SECRETS['NAV_LINKS'],
         'google_form_url': settings.SECRETS['GOOGLE_FORM_URL'],
@@ -33,7 +31,6 @@ def phonebank_view(request):
         'jitsi_room': agent.room_name,
         'agent_name': agent.nickname,
         'sentry_dsn': settings.SECRETS['SENTRY_DSN'],
-        'telnyx_token': fetch_telnyx_token(agent)
     })
 
 
@@ -41,7 +38,14 @@ def api_view(request, id=None):
     try:
         agent = get_agent(request)
     except KeyError as e:
-        return HttpResponse(e, status=403)
+        return HttpResponse(e, status=401)
+    if not agent.is_active:
+        return HttpResponse('Your access is not enabled', status=403)
+    if id == '0':
+        # No voter requested. Client is trying to connect/reconnect to Telnyx.
+        return JsonResponse({
+            'telnyx_token': fetch_telnyx_token(agent),
+        })
     with transaction.atomic():
         if id:
             voter = Voter.objects.select_for_update().get(
@@ -58,5 +62,6 @@ def api_view(request, id=None):
         register_telnyx_call(phone)
     return JsonResponse({
         'voter': voter.to_dict(),
-        'similar_voters': [v.to_dict() for v in voter.find_similar_voters()]
+        'similar_voters': [v.to_dict() for v in voter.find_similar_voters()],
+        'telnyx_token': fetch_telnyx_token(agent),
     })

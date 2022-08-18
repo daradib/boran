@@ -53,7 +53,7 @@
                 </div>
                 <span class="pull-right">
                   <!-- Another echo test SIP URI address is sip:4444@sip2sip.info -->
-                  <button type="button" class="btn btn-secondary" onclick="makeCall('sip:echo@iptel.org')" id="echo" disabled="true">Echo test
+                  <button type="button" class="btn btn-secondary" onclick="connectAndCall('sip:echo@iptel.org')" id="echo" disabled="true">Echo test
                     <i class="fa fa-phone" aria-hidden="true"></i>
                   </button>
                   <button type="button" class="btn btn-primary" onclick="getContact()" id="getContact" disabled="true">New contact
@@ -124,6 +124,7 @@
         const key = urlParams.get('key');
         const path = 'api/voter/' + id + '?key=' + key
         $.getJSON(path, function(api) {
+          telnyxToken = api.telnyx_token;
           $('#name').text(api.voter.name);
           $('#id').text('#' + api.voter.id);
           $('#statename').text(api.voter.statename);
@@ -137,7 +138,7 @@
             } else {
               icon = "fa-phone";
             }
-            $('#phones ul').append('<li class="nav-item"><a class="nav-link" onclick="makeCall(\x27' + phone + '\x27)" id="phone' + phone.substring(1) + '"><i class="fa ' + icon + '" aria-hidden="true"></i> ' + libphonenumber.parsePhoneNumberFromString(phone).format('NATIONAL') + '</a></li>');
+            $('#phones ul').append('<li class="nav-item"><a class="nav-link" onclick="connectAndCall(\x27' + phone + '\x27)" id="phone' + phone.substring(1) + '"><i class="fa ' + icon + '" aria-hidden="true"></i> ' + libphonenumber.parsePhoneNumberFromString(phone).format('NATIONAL') + '</a></li>');
           }
           if (api.similar_voters.length != 0) {
             $('#similar_voters').html('<div class="alert alert-info" role="alert"><p>There are other voters with overlapping phone numbers:</p><ul></ul></div>');
@@ -158,18 +159,18 @@
           // So to preempt this alert, we overwrite the entire iframe element.
           $("#formContainer").html('<iframe id="form" src="' + '{{ google_form_url }}?usp=pp_url&entry.391576799=' + api.voter.id + '&entry.1578854864=' + encodeURIComponent(Object.values(api.voter.phones).join(',')) + '&entry.1498627907=' + key + '&embedded=true' + '" width="100%" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>');
           $('#form').css('height', $(window).height() - 100);
+        }).fail(function(jqxhr) {
+          warning('Unable to fetch new contact: ' + (jqxhr.responseText || jqxhr.statusText));
         });
-        if (typeof telnyxClient == 'undefined' || telnyxClient.connected != true) {
-          telnyxConnect();
-        }
       }
 
       // Adapted from https://github.com/team-telnyx/webrtc/blob/master/packages/js/examples/vanilla/index.html
-      var telnyxClient;
+      var telnyxClient = null;
+      var telnyxToken = null;
       var currentCall = null;
       function telnyxConnect() {
         telnyxClient = new TelnyxWebRTC.TelnyxRTC({
-          login_token: '{{ telnyx_token }}',
+          login_token: telnyxToken,
         });
         telnyxClient.remoteElement = 'audioCall';
         telnyxClient
@@ -241,6 +242,26 @@
           $('#callLog').append(call.cause + ' (' + call.sipCode + ' ' + call.sipReason + ')\n');
         }
       }
+
+      function connectAndCall(phone) {
+        if (telnyxClient == null || telnyxClient.connected != true) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const key = urlParams.get('key');
+          const path = 'api/voter/0?key=' + key;
+          $.getJSON(path, function(api) {
+            telnyxToken = api.telnyx_token;
+            telnyxConnect();
+            telnyxClient.on('telnyx.ready', function() {
+              makeCall(phone);
+            });
+          }).fail(function(jqxhr) {
+            warning('Unable to place call: ' + (jqxhr.responseText || jqxhr.statusText));
+          });
+        } else {
+          makeCall(phone);
+        }
+      }
+
       function makeCall(phone) {
         if (currentCall != null) {
           warning("Call already ongoing");
@@ -276,7 +297,6 @@
       }
 
       $(document).ready(function() {
-        telnyxConnect();
         $('#echo').attr('disabled', false);
         $('#getContact').attr('disabled', false);
       });
