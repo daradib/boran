@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse, HttpResponse
@@ -49,6 +51,14 @@ def api_view(request, id=None):
         return JsonResponse({
             'telnyx_token': fetch_telnyx_token(agent),
         })
+    provided_count = Voter.objects.filter(
+        provided_to=agent,
+        provided_at__gt=now() - timedelta(minutes=5),
+    ).count()
+    if provided_count > 15:
+        agent.is_active = False
+        agent.save()
+        return HttpResponse('You have requested contacts too fast', status=403)
     with transaction.atomic():
         if id:
             voter = Voter.objects.select_for_update().get(
