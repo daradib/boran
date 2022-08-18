@@ -50,12 +50,13 @@ def api_view(request, id=None):
         # No voter requested. Client is trying to connect/reconnect to Telnyx.
         return JsonResponse({
             'telnyx_token': fetch_telnyx_token(agent),
+            'agent_stats': agent.print_stats(),
         })
-    provided_count = Voter.objects.filter(
+    provided_rate_count = Voter.objects.filter(
         provided_to=agent,
         provided_at__gt=now() - timedelta(minutes=5),
     ).count()
-    if provided_count > 15:
+    if provided_rate_count > 15:
         agent.is_active = False
         agent.save()
         return HttpResponse('You have requested contacts too fast', status=403)
@@ -77,4 +78,5 @@ def api_view(request, id=None):
         'voter': voter.to_dict(),
         'similar_voters': [v.to_dict() for v in voter.find_similar_voters()],
         'telnyx_token': fetch_telnyx_token(agent),
+        'agent_stats': agent.print_stats(),
     })

@@ -38,6 +38,32 @@ class Agent(models.Model):
             agent=self
         ).last()
 
+    def print_stats(self):
+        stats = {'count': 0, 'rank': 0, 'count_to_rank_up': 0}
+        provided_counts = Voter.objects.values('provided_to').annotate(
+            cnt=models.Count('provided_to'),
+        ).order_by('-cnt')
+        for (i, record) in enumerate(provided_counts):
+            if record['provided_to'] == self.pk:
+                stats['count'] = record['cnt']
+                stats['rank'] = i + 1
+                if i > 0:
+                    stats['count_to_rank_up'] = \
+                        (provided_counts[i - 1]['cnt'] - record['cnt']) or 1
+                break
+        s = ""
+        if stats['count']:
+            s = "You reached {} contacts and are ranked #{}.".format(
+                stats['count'] + 1, stats['rank'],
+            )
+            if stats['count_to_rank_up']:
+                s += " Call {} more to rank up!".format(
+                    stats['count_to_rank_up'],
+                )
+            else:
+                s += " Congrats!"
+        return s
+
     def __str__(self):
         return "{} ({})".format(self.uuid, self.nickname)
 

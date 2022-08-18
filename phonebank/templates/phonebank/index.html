@@ -65,6 +65,7 @@
             <div class="card d-none" id="callInfo">
               <h5 class="card-header">
                 <span id="callStatus"></span>
+                <small class="text-muted" id="agentStats"></small>
                 <button type="button" class="btn btn-danger pull-right d-none" onclick="currentCall.hangup()" id="hangupCall" disabled="true">Hangup
                   <i class="fa fa-close" aria-hidden="true"></i>
                 </button>
@@ -119,6 +120,7 @@
 
       $('#form').css('height', $(window).height() - 100);
 
+      var agentStats = '';
       function getContact(id='') {
         const urlParams = new URLSearchParams(window.location.search);
         const key = urlParams.get('key');
@@ -159,6 +161,7 @@
           // So to preempt this alert, we overwrite the entire iframe element.
           $("#formContainer").html('<iframe id="form" src="' + '{{ google_form_url }}?usp=pp_url&entry.391576799=' + api.voter.id + '&entry.1578854864=' + encodeURIComponent(Object.values(api.voter.phones).join(',')) + '&entry.1498627907=' + key + '&embedded=true' + '" width="100%" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>');
           $('#form').css('height', $(window).height() - 100);
+          agentStats = api.agent_stats;
         }).fail(function(jqxhr) {
           warning('Unable to fetch new contact: ' + (jqxhr.responseText || jqxhr.statusText));
         });
@@ -235,6 +238,7 @@
             currentCall = null;
             $('#getContact').attr('disabled', false);
             $('#callStatus').text('');
+            $('#agentStats').text(agentStats);
             break;
         }
         if (typeof call.cause != 'undefined' && call.cause != 'NORMAL_CLEARING' && call.state != 'destroy') {
@@ -254,6 +258,7 @@
             telnyxClient.on('telnyx.ready', function() {
               makeCall(phone);
             });
+            agentStats = api.agent_stats;
           }).fail(function(jqxhr) {
             warning('Unable to place call: ' + (jqxhr.responseText || jqxhr.statusText));
           });
@@ -281,6 +286,7 @@
         if (phone[0] == '+') {
           $('#phone' + phone.substring(1)).addClass('text-muted');
         }
+        $('#agentStats').text('');
         $('#callInfo').removeClass('d-none');
         $('#callLog').html('');
         $('#callLogContainer').addClass('d-none');
