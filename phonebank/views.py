@@ -14,9 +14,12 @@ def get_agent(request):
     except KeyError:
         raise KeyError('Missing key parameter')
     try:
-        return Agent.objects.get(uuid=key)
+        agent = Agent.objects.get(uuid=key)
     except Agent.DoesNotExist:
         raise KeyError('Invalid key parameter')
+    agent.last_active = now()
+    agent.save()
+    return agent
 
 
 def phonebank_view(request):
