@@ -3,6 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta name="referrer" content="same-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Phonebank</title>
     <link rel="icon" href="{% static 'boran.png' %}">
@@ -24,11 +25,11 @@
         <ul class="navbar-nav mr-auto">
           {% for nav_link in nav_links %}
           <li class="nav-item">
-            <a class="nav-link" href="{{ nav_link.url }}" target="_blank">{{ nav_link.name }}</a>
+            <a class="nav-link" href="{{ nav_link.url }}" rel="noreferrer" target="_blank">{{ nav_link.name }}</a>
           </li>
           {% endfor %}
         </ul>
-      <a href="https://en.wikipedia.org/wiki/Boran" target="_blank"><img class="pull-right" src="{% static 'boran.png' %}" height="25px"/></a>
+      <a href="https://en.wikipedia.org/wiki/Boran" rel="noreferrer" target="_blank"><img class="pull-right" src="{% static 'boran.png' %}" height="25px"/></a>
       </div>
     </nav>
 
@@ -36,7 +37,7 @@
       <div class="alerts"></div>
       <div class="row">
           <div class="col" id="formContainer">
-            <iframe id="form" src="{{ google_form_url }}?usp=pp_url&embedded=true" width="100%" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+            <iframe id="form" src="{{ google_form_url }}?usp=pp_url&embedded=true" width="100%" frameborder="0" marginheight="0" marginwidth="0" referrerpolicy="no-referrer">Loading…</iframe>
           </div>
           <div class="col-xl-3 col-lg-4 col-md-5">
             <div class="card">
@@ -159,7 +160,7 @@
           // about leaving the site. If this alert is canceled by the user, the
           // form will erroneously remain filled with the previous voter.
           // So to preempt this alert, we overwrite the entire iframe element.
-          $("#formContainer").html('<iframe id="form" src="' + '{{ google_form_url }}?usp=pp_url&entry.391576799=' + api.voter.id + '&entry.1578854864=' + encodeURIComponent(Object.values(api.voter.phones).join(',')) + '&entry.1498627907=' + key + '&embedded=true' + '" width="100%" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>');
+          $("#formContainer").html('<iframe id="form" src="' + '{{ google_form_url }}?usp=pp_url&entry.391576799=' + api.voter.id + '&entry.1578854864=' + encodeURIComponent(Object.values(api.voter.phones).join(',')) + '&entry.1498627907=' + key + '&embedded=true' + '" width="100%" frameborder="0" marginheight="0" marginwidth="0" referrerpolicy="no-referrer">Loading…</iframe>');
           $('#form').css('height', $(window).height() - 100);
           agentStats = api.agent_stats;
         }).fail(function(jqxhr) {
