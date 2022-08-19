@@ -69,6 +69,11 @@ def api_view(request, id=None):
             voter = Voter.objects.select_for_update().filter(
                 provided_to__isnull=True,
             ).order_by('-priority', '?').first()
+            if voter is None:
+                if Voter.objects.exists():
+                    return HttpResponse('Contacts are completed', status=404)
+                else:
+                    return HttpResponse('There are no contacts', status=404)
         voter.provided_to = agent
         voter.provided_at = now()
         voter.save()
