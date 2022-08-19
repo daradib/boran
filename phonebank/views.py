@@ -52,14 +52,24 @@ def api_view(request, id=None):
             'telnyx_token': fetch_telnyx_token(agent),
             'agent_stats': agent.print_stats(),
         })
-    provided_rate_count = Voter.objects.filter(
+    provided_count_6s = Voter.objects.filter(
+        provided_to=agent,
+        provided_at__gt=now() - timedelta(seconds=6),
+    ).count()
+    if provided_count_6s:
+        return HttpResponse(
+            'You requested a new contact too quickly', status=429,
+        )
+    provided_count_5m = Voter.objects.filter(
         provided_to=agent,
         provided_at__gt=now() - timedelta(minutes=5),
     ).count()
-    if provided_rate_count > 15:
+    if provided_count_5m > 15:
         agent.is_active = False
         agent.save()
-        return HttpResponse('You have requested contacts too fast', status=403)
+        return HttpResponse(
+            'You requested too many contacts recently', status=429,
+        )
     with transaction.atomic():
         if id:
             voter = Voter.objects.select_for_update().get(
