@@ -126,6 +126,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const key = urlParams.get('key');
         const path = 'api/voter/' + id + '?key=' + key
+        $('#getContact').attr('disabled', true);
         $.getJSON(path, function(api) {
           telnyxToken = api.telnyx_token;
           $('#name').text(api.voter.name);
@@ -165,7 +166,10 @@
           agentStats = api.agent_stats;
         }).fail(function(jqxhr) {
           warning('Unable to fetch new contact: ' + (jqxhr.responseText || jqxhr.statusText));
+        }).always(function() {
+          $('#getContact').attr('disabled', false);
         });
+        $('#agentStats').text('');
       }
 
       // Adapted from https://github.com/team-telnyx/webrtc/blob/master/packages/js/examples/vanilla/index.html
@@ -237,6 +241,7 @@
             $('#hangupCall').addClass('d-none');
             $('#hangupCall').attr('disabled', true);
             currentCall = null;
+            $('#echo').attr('disabled', false);
             $('#getContact').attr('disabled', false);
             $('#callStatus').text('');
             $('#agentStats').text(agentStats);
@@ -293,6 +298,7 @@
         $('#callLogContainer').addClass('d-none');
         currentCall = telnyxClient.newCall(params);
         $('#getContact').attr('disabled', true);
+        $('#echo').attr('disabled', true);
         $('#hangupCall').removeClass('d-none');
         $('#hangupCall').attr('disabled', false);
       }
