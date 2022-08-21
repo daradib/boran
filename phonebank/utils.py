@@ -26,6 +26,7 @@ def create_telnyx_token(credential_id):
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + settings.SECRETS['TELNYX_API_KEY']
         },
+        timeout=10,
     )
     response.raise_for_status()
     return response.text
@@ -80,29 +81,37 @@ def delete_telnyx_credentials():
     apps.get_model('phonebank.TelnyxCredential').objects.all().delete()
 
 
-def register_telnyx_call(phone):
+def register_telnyx_call(phones):
     if settings.DEBUG:
         # Do not register calls in development.
         return
-    response = requests.post(
-        'https://api.telnyx.com/v2/calls/register',
-        json={
-            'from': settings.SECRETS['TELNYX_PHONE_NUMBER'],
-            'reason': settings.SECRETS['TELNYX_CALL_REASON'],
-            'to': phone.as_e164,
-        },
-        headers={
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer ' + settings.SECRETS['TELNYX_API_KEY'],
-        },
-    )
-    data = response.json()
-    if response.status_code == 403 and data['errors'][0]['code'] == '90050':
-        # This error code corresponds to UNREACHABLE meaning that the
-        # recipient phone number is not associated with verified calls.
-        return False
-    elif data['data']['result'] == 'ok':
-        print("Registered verified call to {}".format(phone.as_e164))
-        return True
-    response.raise_for_status()
+    success = False
+    session = requests.Session()
+    for phone in phones:
+        response = session.post(
+            'https://api.telnyx.com/v2/calls/register',
+            json={
+                'from': settings.SECRETS['TELNYX_PHONE_NUMBER'],
+                'reason': settings.SECRETS['TELNYX_CALL_REASON'],
+                'to': phone.as_e164,
+            },
+            headers={
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization':
+                    'Bearer ' + settings.SECRETS['TELNYX_API_KEY'],
+            },
+            timeout=10,
+        )
+        data = response.json()
+        if response.status_code == 403 \
+                and data['errors'][0]['code'] == '90050':
+            # This error code corresponds to UNREACHABLE meaning that the
+            # recipient phone number is not associated with verified calls.
+            pass
+        elif data['data']['result'] == 'ok':
+            print("Registered verified call to {}".format(phone.as_e164))
+            success = True
+        else:
+            response.raise_for_status()
+    return success

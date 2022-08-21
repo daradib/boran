@@ -128,7 +128,6 @@
         const path = 'api/voter/' + id + '?key=' + key
         $('#getContact').attr('disabled', true);
         $.getJSON(path, function(api) {
-          telnyxToken = api.telnyx_token;
           $('#name').text(api.voter.name);
           $('#id').text('#' + api.voter.id);
           $('#statename').text(api.voter.statename);

@@ -52,11 +52,11 @@ def api_view(request, id=None):
             'telnyx_token': fetch_telnyx_token(agent),
             'agent_stats': agent.print_stats(),
         })
-    provided_count_6s = Voter.objects.filter(
+    provided_exists_6s = Voter.objects.filter(
         provided_to=agent,
         provided_at__gt=now() - timedelta(seconds=6),
-    ).count()
-    if provided_count_6s:
+    ).exists()
+    if provided_exists_6s:
         return HttpResponse(
             'You requested a new contact too quickly', status=429,
         )
@@ -87,11 +87,10 @@ def api_view(request, id=None):
         voter.provided_to = agent
         voter.provided_at = now()
         voter.save()
-    for phone in voter.map_phones().values():
-        register_telnyx_call(phone)
+    phones = voter.map_phones().values()
+    register_telnyx_call(phones)
     return JsonResponse({
         'voter': voter.to_dict(),
         'similar_voters': [v.to_dict() for v in voter.find_similar_voters()],
-        'telnyx_token': fetch_telnyx_token(agent),
         'agent_stats': agent.print_stats(),
     })

@@ -97,6 +97,7 @@ else:
             'USER': SECRETS['DATABASE_USER'],
             'PASSWORD': SECRETS['DATABASE_PASSWORD'],
             'HOST': 'localhost',
+            'CONN_MAX_AGE': 300,
         },
     }
 
