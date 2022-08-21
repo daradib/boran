@@ -34,7 +34,7 @@ if 'SENTRY_DSN' in SECRETS:
         dsn=SECRETS['SENTRY_DSN'],
         environment=sentry_env,
         integrations=[DjangoIntegration()],
-        traces_sample_rate=0.01,
+        traces_sample_rate=SECRETS.get('SENTRY_SAMPLE_RATE', 0),
     )
 
 INSTALLED_APPS = [
