@@ -72,13 +72,15 @@ def api_view(request, id=None):
         )
     with transaction.atomic():
         if id:
-            voter = Voter.objects.select_for_update().get(
+            voter = Voter.objects.select_for_update(skip_locked=True).get(
                 id=id,
             )
+            if voter.provided_to is not None:
+                return HttpResponse('Contact previously assigned', status=403)
         else:
-            voter = Voter.objects.select_for_update().filter(
+            voter = Voter.objects.select_for_update(skip_locked=True).filter(
                 provided_to__isnull=True,
-            ).order_by('-priority', '?').first()
+            ).order_by('-priority').first()
             if voter is None:
                 if Voter.objects.exists():
                     return HttpResponse('Contacts are completed', status=404)
@@ -87,10 +89,12 @@ def api_view(request, id=None):
         voter.provided_to = agent
         voter.provided_at = now()
         voter.save()
-    phones = voter.map_phones().values()
-    register_telnyx_call(phones)
-    return JsonResponse({
-        'voter': voter.to_dict(),
-        'similar_voters': [v.to_dict() for v in voter.find_similar_voters()],
-        'agent_stats': agent.print_stats(),
-    })
+        response = JsonResponse({
+            'voter': voter.to_dict(),
+            'similar_voters':
+                [v.to_dict() for v in voter.find_similar_voters()],
+            'agent_stats': agent.print_stats(),
+        })
+        phones = voter.map_phones().values()
+        register_telnyx_call(phones)
+        return response
