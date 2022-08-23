@@ -125,7 +125,7 @@
       function getContact(id='') {
         const urlParams = new URLSearchParams(window.location.search);
         const key = urlParams.get('key');
-        const path = 'api/voter/' + encodeURIComponent(id) + '?key=' + encodeURIComponent(key);
+        const path = 'api/voter/' + (id && encodeURIComponent(id) + '/') + '?key=' + encodeURIComponent(key);
         $('#getContact').attr('disabled', true);
         $.getJSON(path, function(api) {
           $('#name').text(api.voter.name);
@@ -261,7 +261,7 @@
         if (telnyxClient == null || telnyxClient.connected != true) {
           const urlParams = new URLSearchParams(window.location.search);
           const key = urlParams.get('key');
-          const path = 'api/voter/0?key=' + encodeURIComponent(key);
+          const path = 'api/voter/0/?key=' + encodeURIComponent(key);
           $.getJSON(path, function(api) {
             telnyxToken = api.telnyx_token;
             telnyxConnect();
