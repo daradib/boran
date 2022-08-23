@@ -125,7 +125,7 @@
       function getContact(id='') {
         const urlParams = new URLSearchParams(window.location.search);
         const key = urlParams.get('key');
-        const path = 'api/voter/' + id + '?key=' + key
+        const path = 'api/voter/' + encodeURIComponent(id) + '?key=' + encodeURIComponent(key);
         $('#getContact').attr('disabled', true);
         $.getJSON(path, function(api) {
           $('#name').text(api.voter.name);
@@ -141,15 +141,20 @@
             } else {
               icon = "fa-phone";
             }
-            $('#phones ul').append('<li class="nav-item"><a class="nav-link" onclick="connectAndCall(\x27' + phone + '\x27)" id="phone' + phone.substring(1) + '"><i class="fa ' + icon + '" aria-hidden="true"></i> ' + libphonenumber.parsePhoneNumberFromString(phone).format('NATIONAL') + '</a></li>');
+            if (phone[0] == '+') {
+              const phoneNumber = parseInt(phone.substring(1));
+              if (!isNaN(phoneNumber)) {
+                $('#phones ul').append('<li class="nav-item"><a class="nav-link" onclick="connectAndCall(\x27+' + phoneNumber + '\x27)" id="phone' + phoneNumber + '"><i class="fa ' + icon + '" aria-hidden="true"></i> ' + libphonenumber.parsePhoneNumberFromString('+' + phoneNumber).format('NATIONAL') + '</a></li>');
+              }
+            }
           }
           if (api.similar_voters.length != 0) {
             $('#similar_voters').html('<div class="alert alert-info" role="alert"><p>There are other voters with overlapping phone numbers:</p><ul></ul></div>');
             for (voter of api.similar_voters) {
+              $('#similar_voters ul').append('<li><a href="javascript:getContact(\x27' + voter.id.replaceAll('\x27', '') + '\x27)"></a></li>');
+              $('#similar_voters ul li:last a').text(voter.name)
               if (voter.provided) {
-                $('#similar_voters ul').append('<li><strike><a href="javascript:getContact(' + voter.id + ')">' + voter.name + '</a></strike></li>');
-              } else {
-                $('#similar_voters ul').append('<li><a href="javascript:getContact(' + voter.id + ')">' + voter.name + '</a></li>');
+                $('#similar_voters ul li:last a').wrap('<strike>');
               }
             }
           } else  {
@@ -160,7 +165,7 @@
           // about leaving the site. If this alert is canceled by the user, the
           // form will erroneously remain filled with the previous voter.
           // So to preempt this alert, we overwrite the entire iframe element.
-          $("#formContainer").html('<iframe id="form" src="' + '{{ google_form_url }}?usp=pp_url&entry.391576799=' + api.voter.id + '&entry.1578854864=' + encodeURIComponent(Object.values(api.voter.phones).join(',')) + '&entry.1498627907=' + key + '&embedded=true' + '" width="100%" frameborder="0" marginheight="0" marginwidth="0" referrerpolicy="no-referrer">Loading…</iframe>');
+          $("#formContainer").html('<iframe id="form" src="' + '{{ google_form_url }}?usp=pp_url&entry.391576799=' + encodeURIComponent(api.voter.id) + '&entry.1578854864=' + encodeURIComponent(Object.values(api.voter.phones).join(',')) + '&entry.1498627907=' + encodeURIComponent(key) + '&embedded=true' + '" width="100%" frameborder="0" marginheight="0" marginwidth="0" referrerpolicy="no-referrer">Loading…</iframe>');
           $('#form').css('height', $(window).height() - 100);
           agentStats = api.agent_stats;
         }).fail(function(jqxhr) {
@@ -248,7 +253,7 @@
         }
         if (typeof call.cause != 'undefined' && call.cause != 'NORMAL_CLEARING' && call.state != 'destroy') {
           $('#callLogContainer').removeClass('d-none')
-          $('#callLog').append(call.cause + ' (' + call.sipCode + ' ' + call.sipReason + ')\n');
+          $('#callLog').append(document.createTextNode(call.cause + ' (' + call.sipCode + ' ' + call.sipReason + ')\n'));
         }
       }
 
@@ -256,7 +261,7 @@
         if (telnyxClient == null || telnyxClient.connected != true) {
           const urlParams = new URLSearchParams(window.location.search);
           const key = urlParams.get('key');
-          const path = 'api/voter/0?key=' + key;
+          const path = 'api/voter/0?key=' + encodeURIComponent(key);
           $.getJSON(path, function(api) {
             telnyxToken = api.telnyx_token;
             telnyxConnect();
@@ -289,7 +294,10 @@
           audio: 1,
         };
         if (phone[0] == '+') {
-          $('#phone' + phone.substring(1)).addClass('text-muted');
+          const phoneNumber = parseInt(phone.substring(1));
+          if (!isNaN(phoneNumber)) {
+            $('#phone' + phoneNumber).addClass('text-muted');
+          }
         }
         $('#agentStats').text('');
         $('#callInfo').removeClass('d-none');
@@ -304,7 +312,8 @@
 
       function warning(message) {
         console.warn(message);
-        $('.alerts').append('<div class="alert alert-warning alert-dismissible fade show" role="alert">' + message + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+        $('.alerts').append('<div class="alert alert-warning alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+        $('.alerts .alert:last').prepend(document.createTextNode(message))
         $('.alert-dismissible').alert()
       }
 
