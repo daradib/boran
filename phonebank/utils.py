@@ -82,6 +82,10 @@ def delete_telnyx_credentials():
 
 
 def register_telnyx_call(phones):
+    if not settings.SECRETS['TELNYX_PHONE_NUMBER'] \
+            and not settings.SECRETS['TELNYX_CALL_REASON']:
+        # Do not register calls without phone number and call reason.
+        return
     if settings.DEBUG:
         # Do not register calls in development.
         return
