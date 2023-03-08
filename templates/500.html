@@ -8,7 +8,11 @@
 
 {% if sentry_event_id %}
   <p>Error ID: {{ sentry_event_id }}</p>
-  <script src="https://browser.sentry-cdn.com/7.9.0/bundle.min.js" integrity="sha384-4Q6VnoFQcxYhNxg1ic5R+RRx0fam6rRf9PFAE3oTZhtTV2S8IM7uyl8Bg2z3AFi9" crossorigin="anonymous"></script>
+  <script
+    src="https://browser.sentry-cdn.com/7.41.0/bundle.min.js"
+    integrity="sha384-G2xNjblHi6NB8kRkcvFx2kqUMFeyS+OY+8SdfIqooyjTGC52RhRwhvMVcul/Adpv"
+    crossorigin="anonymous"
+  ></script>
   <script>
     Sentry.init({ dsn: '{{ sentry_dsn }}' });
     Sentry.showReportDialog({ eventId: '{{ sentry_event_id }}' });
