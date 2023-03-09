@@ -90,10 +90,10 @@
       crossorigin="anonymous"
     ></script>
     <script>
-      if (window.navigator.userAgent.indexOf('Chrome') == -1 && window.navigator.userAgent.indexOf('Firefox') == -1) {
+      if (window.navigator.userAgent.indexOf('Chrome') === -1 && window.navigator.userAgent.indexOf('Firefox') === -1) {
         alert("It looks like you're using a browser we don't support. Please try again with the latest version of Brave or Chrome.");
       }
-      Sentry.init({ dsn: '{{ sentry_dsn }}' });
+      Sentry.init({dsn: '{{ sentry_dsn }}'});
     </script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha256-/ijcOLwFf26xEYAjW75FizKVo5tnTYiQddPZoLUHHZ8=" crossorigin="anonymous"></script>
@@ -103,10 +103,10 @@
     <script src="https://cdn.jsdelivr.net/npm/@telnyx/webrtc@2.9.0/lib/bundle.js" integrity="sha256-eztEU4iNdVeJds6ZY8b4xyYL7CudNMidKmbOowCKbYg=" crossorigin="anonymous"></script>
     <script src="https://{{ jitsi_server }}/external_api.js"></script>
     <script>
-      const jitsiServer = '{{ jitsi_server }}';
-      const jitsiRoom = '{{ jitsi_room }}';
       const agentName = '{{ agent_name }}';
       const googleFormUrl = '{{ google_form_url }}';
+      const jitsiRoom = '{{ jitsi_room }}';
+      const jitsiServer = '{{ jitsi_server }}';
     </script>
     <script src="{% static 'phonebank/phonebank.js' %}"></script>
   </body>

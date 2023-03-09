@@ -1,11 +1,24 @@
+/*global
+    $, libphonenumber, TelnyxWebRTC, JitsiMeetExternalAPI,
+    agentName, googleFormUrl, jitsiRoom, jitsiServer
+*/
+/*jslint
+    browser, devel, indent2, long, single
+*/
+
+var agentStats = '';
+var currentCall = null;
 var jitsiApi;
-if(jitsiRoom) {
+var telnyxClient = null;
+var telnyxToken = null;
+
+if (jitsiRoom) {
   const options = {
-      roomName: jitsiRoom,
-      height: $(window).height() - 100,
-      parentNode: document.querySelector('#meet'),
-      configOverwrite: {startWithAudioMuted: true, startWithVideoMuted: true},
-      userInfo: {displayName: agentName},
+    configOverwrite: {startWithAudioMuted: true, startWithVideoMuted: true},
+    height: $(window).height() - 100,
+    parentNode: document.querySelector('#meet'),
+    roomName: jitsiRoom,
+    userInfo: {displayName: agentName}
   };
   jitsiApi = new JitsiMeetExternalAPI(jitsiServer, options);
 } else {
@@ -14,43 +27,42 @@ if(jitsiRoom) {
 
 $('#form').css('height', $(window).height() - 100);
 
-var agentStats = '';
-function getContact(id='') {
+function getContact(id = '') {
   const urlParams = new URLSearchParams(window.location.search);
   const key = urlParams.get('key');
   const path = 'api/voter/' + (id && encodeURIComponent(id) + '/') + '?key=' + encodeURIComponent(key);
   $('#getContact').attr('disabled', true);
-  $.getJSON(path, function(api) {
+  $.getJSON(path, function (api) {
     $('#name').text(api.voter.name);
     $('#id').text('#' + api.voter.id);
     $('#statename').text(api.voter.statename);
     $('#notes').html(api.voter.notes);
     $('#phones').html('<ul class="nav nav-pills"></ul>');
-    for (phonetype of Object.keys(api.voter.phones)) {
+    Object.keys(api.voter.phones).forEach(function (phonetype) {
       const phone = api.voter.phones[phonetype];
       var icon;
       if (phonetype.includes('cell')) {
-        icon = "fa-mobile";
+        icon = 'fa-mobile';
       } else {
-        icon = "fa-phone";
+        icon = 'fa-phone';
       }
-      if (phone[0] == '+') {
+      if (phone[0] === '+') {
         const phoneNumber = parseInt(phone.substring(1));
-        if (!isNaN(phoneNumber)) {
-          $('#phones ul').append('<li class="nav-item"><a class="nav-link" onclick="connectAndCall(\x27+' + phoneNumber + '\x27)" id="phone' + phoneNumber + '"><i class="fa ' + icon + '" aria-hidden="true"></i> ' + libphonenumber.parsePhoneNumberFromString('+' + phoneNumber).format('NATIONAL') + '</a></li>');
+        if (!Number.isNaN(phoneNumber)) {
+          $('#phones ul').append('<li class="nav-item"><a class="nav-link" onclick="connectAndCall(\'+' + phoneNumber + '\')" id="phone' + phoneNumber + '"><i class="fa ' + icon + '" aria-hidden="true"></i> ' + libphonenumber.parsePhoneNumberFromString('+' + phoneNumber).format('NATIONAL') + '</a></li>');
         }
       }
-    }
-    if (api.similar_voters.length != 0) {
+    });
+    if (api.similar_voters.length !== 0) {
       $('#similar_voters').html('<div class="alert alert-info" role="alert"><p>There are other voters with overlapping phone numbers:</p><ul></ul></div>');
-      for (voter of api.similar_voters) {
-        $('#similar_voters ul').append('<li><a href="javascript:getContact(\x27' + voter.id.replaceAll('\x27', '') + '\x27)"></a></li>');
-        $('#similar_voters ul li:last a').text(voter.name)
+      api.similar_voters.forEach(function (voter) {
+        $('#similar_voters ul').append('<li><a href="javascript:getContact(\'' + voter.id.replaceAll('\'', '') + '\')"></a></li>');
+        $('#similar_voters ul li:last a').text(voter.name);
         if (voter.provided) {
           $('#similar_voters ul li:last a').wrap('<strike>');
         }
-      }
-    } else  {
+      });
+    } else {
       $('#similar_voters').html('');
     }
     // When changing the iframe src or location.href, if there are
@@ -61,31 +73,25 @@ function getContact(id='') {
     $("#formContainer").html('<iframe id="form" src="' + googleFormUrl + '?usp=pp_url&entry.391576799=' + encodeURIComponent(api.voter.id) + '&entry.1578854864=' + encodeURIComponent(Object.values(api.voter.phones).join(',')) + '&entry.1498627907=' + encodeURIComponent(key) + '&embedded=true' + '" width="100%" frameborder="0" marginheight="0" marginwidth="0" referrerpolicy="no-referrer">Loading…</iframe>');
     $('#form').css('height', $(window).height() - 100);
     agentStats = api.agent_stats;
-  }).fail(function(jqxhr) {
+  }).fail(function (jqxhr) {
     warning('Unable to fetch new contact: ' + (jqxhr.responseText || jqxhr.statusText));
-  }).always(function() {
+  }).always(function () {
     $('#getContact').attr('disabled', false);
   });
   $('#agentStats').text('');
 }
 
 // Adapted from https://github.com/team-telnyx/webrtc/blob/master/packages/js/examples/vanilla/index.html
-var telnyxClient = null;
-var telnyxToken = null;
-var currentCall = null;
 function telnyxConnect() {
   telnyxClient = new TelnyxWebRTC.TelnyxRTC({
-    login_token: telnyxToken,
+    login_token: telnyxToken
   });
   telnyxClient.remoteElement = 'audioCall';
-  telnyxClient
-  .on('telnyx.ready', function () {
+  telnyxClient.on('telnyx.ready', function () {
     console.log('Telnyx ready');
-  })
-  .on('telnyx.socket.close', function () {
+  }).on('telnyx.socket.close', function () {
     console.log('Disconnected from Telnyx');
-  })
-  .on('telnyx.notification', handleNotification);
+  }).on('telnyx.notification', handleNotification);
   console.log('Connecting to Telnyx');
   telnyxClient.connect();
 }
@@ -95,74 +101,73 @@ function telnyxDisconnect() {
 }
 function handleNotification(notification) {
   switch (notification.type) {
-    case 'callUpdate':
-      handleCallUpdate(notification.call);
-      break;
-    case 'vertoClientReady':
-      break;
-    default:
-      warning(notification.type);
-      break;
+  case 'callUpdate':
+    handleCallUpdate(notification.call);
+    break;
+  case 'vertoClientReady':
+    break;
+  default:
+    warning(notification.type);
   }
 }
 function handleCallUpdate(call) {
   currentCall = call;
   $('#callStatus').text("Call " + call.state);
   switch (call.state) {
-    case 'new': // Setup the UI
-      break;
-    case 'trying': // You are trying to call someone and he's ringing now
-      break;
-    case 'recovering': // Call is recovering from a previous session
-      if (confirm('Recover the previous call?')) {
+  case 'new': // Setup the UI
+    break;
+  case 'trying': // You are trying to call someone and he's ringing now
+    break;
+  case 'recovering': // Call is recovering from a previous session
+    if (confirm('Recover the previous call?')) {
+      currentCall.answer();
+    } else {
+      currentCall.hangup();
+    }
+    break;
+  case 'ringing': // Someone is calling you
+    //used to avoid alert block audio play, I delayed to audio play first.
+    setTimeout(function () {
+      if (confirm('Pick up the call?')) {
         currentCall.answer();
       } else {
         currentCall.hangup();
       }
-      break;
-    case 'ringing': // Someone is calling you
-      //used to avoid alert block audio play, I delayed to audio play first.
-      setTimeout(function () {
-        if (confirm('Pick up the call?')) {
-          currentCall.answer();
-        } else {
-          currentCall.hangup();
-        }
-      }, 1000);
-      break;
-    case 'active': // Call has become active
-      break;
-    case 'hangup': // Call is over
-      break;
-    case 'destroy': // Call has been destroyed
-      $('#hangupCall').addClass('d-none');
-      $('#hangupCall').attr('disabled', true);
-      currentCall = null;
-      $('#echo').attr('disabled', false);
-      $('#getContact').attr('disabled', false);
-      $('#callStatus').text('');
-      $('#agentStats').text(agentStats);
-      break;
+    }, 1000);
+    break;
+  case 'active': // Call has become active
+    break;
+  case 'hangup': // Call is over
+    break;
+  case 'destroy': // Call has been destroyed
+    $('#hangupCall').addClass('d-none');
+    $('#hangupCall').attr('disabled', true);
+    currentCall = null;
+    $('#echo').attr('disabled', false);
+    $('#getContact').attr('disabled', false);
+    $('#callStatus').text('');
+    $('#agentStats').text(agentStats);
+    break;
   }
-  if (typeof call.cause != 'undefined' && call.cause != 'NORMAL_CLEARING' && call.state != 'destroy') {
-    $('#callLogContainer').removeClass('d-none')
+  if (call.cause !== undefined && call.cause !== 'NORMAL_CLEARING' && call.state !== 'destroy') {
+    $('#callLogContainer').removeClass('d-none');
     $('#callLog').append(document.createTextNode(call.cause + ' (' + call.sipCode + ' ' + call.sipReason + ')\n'));
   }
 }
 
 function connectAndCall(phone) {
-  if (telnyxClient == null || telnyxClient.connected != true) {
+  if (telnyxClient === null || telnyxClient.connected) {
     const urlParams = new URLSearchParams(window.location.search);
     const key = urlParams.get('key');
     const path = 'api/voter/0/?key=' + encodeURIComponent(key);
-    $.getJSON(path, function(api) {
+    $.getJSON(path, function (api) {
       telnyxToken = api.telnyx_token;
       telnyxConnect();
-      telnyxClient.on('telnyx.ready', function() {
+      telnyxClient.on('telnyx.ready', function () {
         makeCall(phone);
       });
       agentStats = api.agent_stats;
-    }).fail(function(jqxhr) {
+    }).fail(function (jqxhr) {
       warning('Unable to place call: ' + (jqxhr.responseText || jqxhr.statusText));
     });
   } else {
@@ -171,24 +176,24 @@ function connectAndCall(phone) {
 }
 
 function makeCall(phone) {
-  if (currentCall != null) {
+  if (currentCall !== null) {
     warning("Call already ongoing");
     return;
   }
   if (jitsiRoom) {
-    jitsiApi.isAudioMuted().then(muted => {
-      if(!muted) {
-        warning("Please mute conference audio during call")
+    jitsiApi.isAudioMuted().then(function (muted) {
+      if (!muted) {
+        warning("Please mute conference audio during call");
       }
     });
   }
   const params = {
-    destinationNumber: phone,
     audio: 1,
+    destinationNumber: phone
   };
-  if (phone[0] == '+') {
+  if (phone[0] === '+') {
     const phoneNumber = parseInt(phone.substring(1));
-    if (!isNaN(phoneNumber)) {
+    if (!Number.isNaN(phoneNumber)) {
       $('#phone' + phoneNumber).addClass('text-muted');
     }
   }
@@ -205,18 +210,19 @@ function makeCall(phone) {
 
 function warning(message) {
   console.warn(message);
-  $('.alerts').append('<div class="alert alert-warning alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
-  $('.alerts .alert:last').prepend(document.createTextNode(message))
-  $('.alert-dismissible').alert()
+  $('.alerts').append('<div class="alert alert-warning alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+  $('.alerts .alert:last').prepend(document.createTextNode(message));
+  $('.alert-dismissible').alert();
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
   $('#echo').attr('disabled', false);
   $('#getContact').attr('disabled', false);
 });
 
-$(document).keydown(function(e) {
-  if (currentCall != null && !e.originalEvent.repeat && "0123456789#*".includes(e.key)) {
+$(document).keydown(function (e) {
+  const digits = '0123456789#*';
+  if (currentCall !== null && !e.originalEvent.repeat && digits.includes(e.key)) {
     currentCall.dtmf(e.key);
   }
 });
