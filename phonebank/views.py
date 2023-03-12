@@ -11,14 +11,8 @@ from phonebank.utils import fetch_telnyx_token, register_telnyx_call
 
 
 def get_agent(request):
-    try:
-        key = request.GET['key']
-    except KeyError:
-        raise KeyError('Missing key parameter')
-    try:
-        agent = Agent.objects.get(uuid=key)
-    except Agent.DoesNotExist:
-        raise KeyError('Invalid key parameter')
+    key = request.GET['key']
+    agent = Agent.objects.get(uuid=key)
     agent.last_active = now()
     agent.save()
     return agent
@@ -28,7 +22,9 @@ def phonebank_view(request):
     try:
         agent = get_agent(request)
     except KeyError as e:
-        return HttpResponse(e, status=401)
+        return HttpResponse('Missing key parameter', status=400)
+    except Agent.DoesNotExist:
+        return HttpResponse('Invalid key parameter', status=401)
     return render(request, 'phonebank/index.html', {
         'nav_links': settings.SECRETS['NAV_LINKS'],
         'google_form_url': settings.SECRETS['GOOGLE_FORM_URL'],
@@ -43,7 +39,9 @@ def api_view(request, id=None):
     try:
         agent = get_agent(request)
     except KeyError as e:
-        return HttpResponse(e, status=401)
+        return HttpResponse('Missing key parameter', status=400)
+    except Agent.DoesNotExist:
+        return HttpResponse('Invalid key parameter', status=401)
     if not agent.is_active:
         return HttpResponse('Your access is not enabled', status=403)
     if id == '0':
