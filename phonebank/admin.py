@@ -97,7 +97,6 @@ class VoterResource(resources.ModelResource):
 
     class Meta:
         model = Voter
-        use_bulk = True
 
 
 @admin.register(Voter)
