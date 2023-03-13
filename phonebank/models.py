@@ -61,7 +61,7 @@ class Agent(models.Model):
         s = ""
         if stats['count']:
             s = "You reached {} contacts and are ranked #{}.".format(
-                stats['count'] + 1, stats['rank'],
+                stats['count'], stats['rank'],
             )
             if stats['count_to_rank_up']:
                 s += " Call {} more to rank up!".format(
