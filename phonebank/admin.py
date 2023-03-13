@@ -1,3 +1,6 @@
+from urllib.parse import urlparse
+
+from django.conf import settings
 from django.contrib import admin, messages
 from django.utils.translation import ngettext
 from import_export import resources
@@ -58,11 +61,15 @@ class AgentAdmin(ImportExportActionModelAdmin):
     @admin.action(permissions=['view'])
     def show_access_links(self, request, queryset):
         for agent in queryset:
+            url = request.build_absolute_uri(agent.get_absolute_url())
+            if not settings.DEBUG:
+                # Alternatively, set Django setting SECURE_PROXY_SSL_HEADER.
+                url = urlparse(url)._replace(scheme='https').geturl()
             self.message_user(
                 request,
                 "Access link for {}: {}".format(
                     agent.nickname,
-                    request.build_absolute_uri(agent.get_absolute_url())
+                    url,
                 ),
             )
 
