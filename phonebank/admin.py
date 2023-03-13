@@ -20,7 +20,7 @@ class AgentAdmin(ImportExportActionModelAdmin):
         'nickname', 'email_address', 'room', 'is_active', 'last_active',
         'provided_count',
     ]
-    list_filter = ['room', 'is_active']
+    list_filter = [('room', admin.RelatedOnlyFieldListFilter), 'is_active']
     date_hierarchy = 'last_active'
     search_fields = ['uuid', 'email_address', 'nickname']
     actions = ['enable_access', 'disable_access', 'show_access_links']
@@ -75,7 +75,7 @@ class RoomAdmin(admin.ModelAdmin):
 @admin.register(TelnyxCredential)
 class TelnyxCredentialAdmin(admin.ModelAdmin):
     list_display = ['id', 'agent']
-    list_filter = ['agent']
+    list_filter = [('agent', admin.RelatedOnlyFieldListFilter)]
     search_fields = ['id', 'agent__nickname']
 
     def delete_queryset(self, request, queryset):
@@ -99,7 +99,11 @@ class VoterAdmin(ImportExportActionModelAdmin):
         'id', 'statename', 'name_last', 'name_first', 'name_middle',
         'priority', 'provided_to', 'provided_at',
     ]
-    list_filter = ['statename', 'priority', 'provided_to']
+    list_filter = [
+        'priority',
+        ('provided_to', admin.RelatedOnlyFieldListFilter),
+        ('statename', admin.AllValuesFieldListFilter),
+    ]
     date_hierarchy = 'provided_at'
     search_fields = [
         'id', 'name_last', 'name_first', 'name_middle',
