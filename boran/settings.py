@@ -138,5 +138,10 @@ FILE_UPLOAD_HANDLERS = [
     'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 ]
 
+# Increase limit on upload parameters to allow selecting many objects for
+# admin actions such as deleting selected objects.
+# See https://code.djangoproject.com/ticket/26810
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
+
 IMPORT_EXPORT_SKIP_ADMIN_LOG = True
 PHONENUMBER_DEFAULT_REGION = 'US'
