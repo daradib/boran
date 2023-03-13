@@ -4,6 +4,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import localflavor.us.models
 import phonenumber_field.modelfields
+import uuid
 
 
 class Migration(migrations.Migration):
@@ -17,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Agent',
             fields=[
-                ('uuid', models.SlugField(primary_key=True, serialize=False)),
+                ('uuid', models.SlugField(default=uuid.uuid4, primary_key=True, serialize=False)),
                 ('email_address', models.EmailField(max_length=254, unique=True)),
                 ('nickname', models.SlugField(unique=True)),
                 ('is_active', models.BooleanField(default=True)),

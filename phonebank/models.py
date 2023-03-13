@@ -1,5 +1,6 @@
 import html
 from urllib.parse import urlencode
+from uuid import uuid4
 
 from django.db import models
 from django.urls import reverse
@@ -18,7 +19,7 @@ class Room(models.Model):
 
 
 class Agent(models.Model):
-    uuid = models.SlugField(primary_key=True)
+    uuid = models.SlugField(primary_key=True, default=uuid4)
     email_address = models.EmailField(unique=True)
     nickname = models.SlugField(unique=True)
     room = models.ForeignKey(
