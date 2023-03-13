@@ -156,7 +156,7 @@ function handleCallUpdate(call) {
 }
 
 function connectAndCall(phone) {
-  if (telnyxClient === null || telnyxClient.connected) {
+  if (telnyxClient === null || !telnyxClient.connected) {
     const urlParams = new URLSearchParams(window.location.search);
     const key = urlParams.get('key');
     const path = 'api/voter/0/?key=' + encodeURIComponent(key);
