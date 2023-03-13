@@ -1,4 +1,5 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.utils.translation import ngettext
 from import_export import resources
 from import_export.admin import ImportExportActionModelAdmin
 
@@ -22,6 +23,48 @@ class AgentAdmin(ImportExportActionModelAdmin):
     list_filter = ['room', 'is_active']
     date_hierarchy = 'last_active'
     search_fields = ['uuid', 'email_address', 'nickname']
+    actions = ['enable_access', 'disable_access', 'show_access_links']
+
+    @admin.action(permissions=['change'])
+    def enable_access(self, request, queryset):
+        updated = queryset.filter(is_active=False).update(is_active=True)
+        self.message_user(
+            request,
+            ngettext(
+                "{} agent was enabled.",
+                "{} agents were enabled.",
+                updated,
+            ).format(updated),
+            messages.SUCCESS,
+        )
+
+    @admin.action(permissions=['change'])
+    def disable_access(self, request, queryset):
+        updated = queryset.filter(is_active=True).update(is_active=False)
+        for telnyx_credential in TelnyxCredential.objects.exclude(
+            agent__is_active=True,
+        ):
+            telnyx_credential.delete()
+        self.message_user(
+            request,
+            ngettext(
+                "{} agent was disabled.",
+                "{} agents were disabled.",
+                updated,
+            ).format(updated),
+            messages.SUCCESS,
+        )
+
+    @admin.action(permissions=['view'])
+    def show_access_links(self, request, queryset):
+        for agent in queryset:
+            self.message_user(
+                request,
+                "Access link for {}: {}".format(
+                    agent.nickname,
+                    request.build_absolute_uri(agent.get_absolute_url())
+                ),
+            )
 
 
 @admin.register(Room)
