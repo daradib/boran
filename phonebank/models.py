@@ -1,6 +1,8 @@
 import html
+from urllib.parse import urlencode
 
 from django.db import models
+from django.urls import reverse
 from localflavor.us.models import USStateField
 import markdown
 from phonenumber_field.modelfields import PhoneNumberField
@@ -67,6 +69,9 @@ class Agent(models.Model):
             else:
                 s += " Congrats!"
         return s
+
+    def get_absolute_url(self):
+        return reverse('index') + '?' + urlencode({'key': self.uuid})
 
     def __str__(self):
         return self.nickname
