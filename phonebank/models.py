@@ -26,6 +26,10 @@ class Agent(models.Model):
     last_active = models.DateTimeField(null=True, blank=True)
 
     @property
+    def provided_count(self):
+        return self.voter_set.count()
+
+    @property
     def room_name(self):
         if self.room:
             return self.room.name
@@ -65,7 +69,7 @@ class Agent(models.Model):
         return s
 
     def __str__(self):
-        return "{} ({})".format(self.uuid, self.nickname)
+        return self.nickname
 
 
 class TelnyxCredential(models.Model):
