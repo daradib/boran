@@ -147,9 +147,16 @@ function handleCallUpdate(call) {
     $('#getContact').attr('disabled', false);
     $('#callStatus').text('');
     $('#agentStats').text(agentStats);
+    if (call.causeCode === 21 || call.sipCode === 403) {
+      // Equivalent to cause 'CALL_REJECTED' or sipReason 'Forbidden'.
+      // Telnyx credentials may have been deleted. Try reconnecting later.
+      telnyxDisconnect();
+    }
     break;
   }
-  if (call.cause !== undefined && call.cause !== 'NORMAL_CLEARING' && call.state !== 'destroy') {
+  const ignoreCauses = [undefined, 'NORMAL_CLEARING', 'PURGE'];
+  const ignoreStates = ['destroy', 'purge'];
+  if (ignoreCauses.indexOf(call.cause) === -1 && ignoreStates.indexOf(call.state) === -1) {
     $('#callLogContainer').removeClass('d-none');
     $('#callLog').append(document.createTextNode(call.cause + ' (' + call.sipCode + ' ' + call.sipReason + ')\n'));
   }
