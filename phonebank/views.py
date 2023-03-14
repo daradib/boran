@@ -62,7 +62,7 @@ def api_view(request, id=None):
         provided_to=agent,
         provided_at__gt=now() - timedelta(minutes=5),
     ).count()
-    if provided_count_5m > 15:
+    if provided_count_5m > 25:
         agent.is_active = False
         agent.save()
         return HttpResponse(
