@@ -31,35 +31,39 @@ function getContact(id = '') {
   const urlParams = new URLSearchParams(window.location.search);
   const key = urlParams.get('key');
   const path = 'api/voter/' + (id && encodeURIComponent(id) + '/') + '?key=' + encodeURIComponent(key);
+  var similarVotersPending = false;
+  $('#phones button').attr('disabled', true);
   $('#getContact').attr('disabled', true);
   $.getJSON(path, function (api) {
     $('#name').text(api.voter.name);
     $('#id').text('#' + api.voter.id);
     $('#statename').text(api.voter.statename);
     $('#notes').html(api.voter.notes);
-    $('#phones').html('<ul class="nav nav-pills"></ul>');
+    $('#phones').html('');
     Object.keys(api.voter.phones).forEach(function (phonetype) {
       const phone = api.voter.phones[phonetype];
       var icon;
       if (phonetype.includes('cell')) {
         icon = 'fa-mobile';
       } else {
-        icon = 'fa-phone';
+        icon = 'fa-home';
       }
       if (phone[0] === '+') {
         const phoneNumber = parseInt(phone.substring(1));
         if (!Number.isNaN(phoneNumber)) {
-          $('#phones ul').append('<li class="nav-item"><a class="nav-link" onclick="connectAndCall(\'+' + phoneNumber + '\')" id="phone' + phoneNumber + '"><i class="fa ' + icon + '" aria-hidden="true"></i> ' + libphonenumber.parsePhoneNumberFromString('+' + phoneNumber).format('NATIONAL') + '</a></li>');
+          $('#phones').append('<button type="button" class="btn btn-outline-primary btn-sm" onclick="connectAndCall(\'+' + phoneNumber + '\')" id="phone' + phoneNumber + '"><i class="fa ' + icon + '" aria-hidden="true"></i> <small>' + libphonenumber.parsePhoneNumberFromString('+' + phoneNumber).format('NATIONAL') + '</small></button>');
         }
       }
     });
     if (api.similar_voters.length !== 0) {
-      $('#similar_voters').html('<div class="alert alert-info" role="alert"><p>There are other voters with overlapping phone numbers:</p><ul></ul></div>');
+      $('#similar_voters').html('<div class="alert alert-warning" role="alert"><p>Potential household members or duplicates:</p><ul></ul></div>');
       api.similar_voters.forEach(function (voter) {
-        $('#similar_voters ul').append('<li><a href="javascript:getContact(\'' + voter.id.replaceAll('\'', '') + '\')"></a></li>');
+        $('#similar_voters ul').append('<li><a class="link" role="button" title="' + voter.id.replaceAll('"', '') + '" onclick="getContact(\'' + voter.id.replaceAll('\'', '') + '\')"></a></li>');
         $('#similar_voters ul li:last a').text(voter.name);
         if (voter.provided) {
           $('#similar_voters ul li:last a').wrap('<strike>');
+        } else {
+          similarVotersPending = true;
         }
       });
     } else {
@@ -76,7 +80,10 @@ function getContact(id = '') {
   }).fail(function (jqxhr) {
     warning('Unable to fetch new contact: ' + (jqxhr.responseText || jqxhr.statusText));
   }).always(function () {
-    $('#getContact').attr('disabled', false);
+    if (!similarVotersPending) {
+      $('#getContact').attr('disabled', false);
+    }
+    $('#phones button').attr('disabled', false);
   });
   $('#agentStats').text('');
 }
