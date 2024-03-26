@@ -18,7 +18,7 @@ defusedxml==0.7.1
     # via odfpy
 diff-match-patch==20230430
     # via django-import-export
-django==3.2.25
+django==4.2.11
     # via
     #   -r requirements.in
     #   django-import-export
@@ -61,8 +61,6 @@ pynacl==1.5.0
     # via telnyx
 python-stdnum==1.20
     # via django-localflavor
-pytz==2024.1
-    # via django
 pyyaml==6.0.1
     # via tablib
 requests==2.31.0
