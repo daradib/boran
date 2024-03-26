@@ -85,8 +85,8 @@
     </main>
 
     <script
-      src="https://browser.sentry-cdn.com/7.41.0/bundle.min.js"
-      integrity="sha384-G2xNjblHi6NB8kRkcvFx2kqUMFeyS+OY+8SdfIqooyjTGC52RhRwhvMVcul/Adpv"
+      src="https://browser.sentry-cdn.com/7.108.0/bundle.min.js"
+      integrity="sha384-/4L19JIb3v6arzwh7HAi+GBry2i2N311UqAc7lQ5jz//z5PUfBkVlfhR/+JltqBd"
       crossorigin="anonymous"
     ></script>
     <script>
@@ -95,11 +95,11 @@
       }
       Sentry.init({dsn: '{{ sentry_dsn }}'});
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha256-QjIXq/h3XOotww+h/j4cXiTcNZqA8cN60pqGCUv+gdE=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.21/bundle/libphonenumber-js.min.js" integrity="sha256-m2S+cXlam/mJ+FFygyuk3ac1DVPCIzEeFfv0BoP5gtA=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/webrtc-adapter@8.2.1/out/adapter.js" integrity="sha256-tn/6nj2kh5eF1JIZ7VvROoCmrJd+K7Qm8JaT4HH3sLY=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@telnyx/webrtc@2.9.0/lib/bundle.js" integrity="sha256-eztEU4iNdVeJds6ZY8b4xyYL7CudNMidKmbOowCKbYg=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.59/bundle/libphonenumber-js.min.js" integrity="sha256-kOBhDi1fziWREufdsP/RdTSwxnyFDQSmzbrZ4IYdlYI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/webrtc-adapter@8.2.3/out/adapter.js" integrity="sha256-kAskxpB3TqAs8/c4ofh/G0f7T4uX44im0QiyO4tlRHQ=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@telnyx/webrtc@2.11.0/lib/bundle.js" integrity="sha256-tEBT9xtolXTlrkeycPXDtcdnpgYJIpFvonYCMvHI8aM=" crossorigin="anonymous"></script>
     <script src="https://{{ jitsi_server }}/external_api.js"></script>
     <script>
       const agentName = '{{ agent_name }}';
