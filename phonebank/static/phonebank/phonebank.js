@@ -70,7 +70,7 @@ function getContact(id = '') {
     // about leaving the site. If this alert is canceled by the user, the
     // form will erroneously remain filled with the previous voter.
     // So to preempt this alert, we overwrite the entire iframe element.
-    $("#formContainer").html('<iframe id="form" src="' + googleFormUrl + '?usp=pp_url&entry.391576799=' + encodeURIComponent(api.voter.id) + '&entry.1578854864=' + encodeURIComponent(Object.values(api.voter.phones).join(',')) + '&entry.1498627907=' + encodeURIComponent(key) + '&embedded=true' + '" width="100%" frameborder="0" marginheight="0" marginwidth="0" referrerpolicy="no-referrer">Loading…</iframe>');
+    $("#formContainer").html('<iframe id="form" src="' + googleFormUrl + '?usp=pp_url&amp;entry.391576799=' + encodeURIComponent(api.voter.id) + '&amp;entry.1578854864=' + encodeURIComponent(Object.values(api.voter.phones).join(',')) + '&amp;entry.1498627907=' + encodeURIComponent(key) + '&amp;embedded=true' + '" width="100%" frameborder="0" marginheight="0" marginwidth="0" referrerpolicy="no-referrer">Loading…</iframe>');
     $('#form').css('height', $(window).height() - 100);
     agentStats = api.agent_stats;
   }).fail(function (jqxhr) {
