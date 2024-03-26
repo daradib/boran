@@ -12,6 +12,6 @@ The backend is implemented as a Python/Django app with voter and volunteer (agen
 
 ## Copyright
 
-Copyright 2020-2023 Dara Adib.
+Copyright 2020-2024 Dara Adib.
 
 This project is licensed under the terms of the GNU Affero General Public License, either version 3 of the License, or (at your option) any later version.
