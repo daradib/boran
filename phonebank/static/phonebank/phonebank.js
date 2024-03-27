@@ -8,6 +8,8 @@
 
 var agentStats = '';
 var currentCall = null;
+var currentCallStartTime = null;
+var currentCallTimerID = null;
 var jitsiApi;
 var telnyxClient = null;
 var telnyxToken = null;
@@ -143,6 +145,9 @@ function handleCallUpdate(call) {
     }, 1000);
     break;
   case 'active': // Call has become active
+    $('#hangupCall').attr('disabled', true);
+    currentCallStartTime = new Date();
+    currentCallTimerID = setInterval(updateCallTimer, 500);
     break;
   case 'hangup': // Call is over
     break;
@@ -150,9 +155,12 @@ function handleCallUpdate(call) {
     $('#hangupCall').addClass('d-none');
     $('#hangupCall').attr('disabled', true);
     currentCall = null;
+    clearInterval(currentCallTimerID);
+    currentCallStartTime = null;
     $('#echo').attr('disabled', false);
     $('#getContact').attr('disabled', false);
     $('#callStatus').text('');
+    $('#callTimer').text('');
     $('#agentStats').text(agentStats);
     if (call.causeCode === 21 || call.sipCode === 403) {
       // Equivalent to cause 'CALL_REJECTED' or sipReason 'Forbidden'.
@@ -216,10 +224,20 @@ function makeCall(phone) {
   $('#callLog').html('');
   $('#callLogContainer').addClass('d-none');
   currentCall = telnyxClient.newCall(params);
+  currentCallStartTime = null;
   $('#getContact').attr('disabled', true);
   $('#echo').attr('disabled', true);
   $('#hangupCall').removeClass('d-none');
   $('#hangupCall').attr('disabled', false);
+}
+
+function updateCallTimer() {
+  const elapsedTime = new Date() - currentCallStartTime;
+  if (elapsedTime >= 7000) {
+    $('#hangupCall').attr('disabled', false);
+  }
+  const mmss = new Date(elapsedTime).toISOString().slice(14, 19);
+  $('#callTimer').text(mmss);
 }
 
 function warning(message) {
