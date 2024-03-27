@@ -251,8 +251,13 @@ function warning(message) {
 }
 
 $(document).ready(function () {
-  $('#echo').attr('disabled', false);
-  $('#getContact').attr('disabled', false);
+  const webRTCInfo = TelnyxWebRTC.TelnyxRTC.webRTCInfo();
+  if (webRTCInfo.supportWebRTC) {
+    $('#echo').attr('disabled', false);
+    $('#getContact').attr('disabled', false);
+  } else {
+    warning("Your browser does not support making calls.");
+  }
 });
 
 $(document).keydown(function (e) {
