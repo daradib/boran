@@ -160,6 +160,7 @@ function handleCallUpdate(call) {
     currentCall = null;
     clearInterval(currentCallTimerID);
     currentCallStartTime = null;
+    $('#phones button').attr('disabled', false);
     $('#echo').attr('disabled', false);
     $('#getContact').attr('disabled', false);
     $('#callStatus').text('');
@@ -230,6 +231,7 @@ function makeCall(phone) {
   currentCallStartTime = null;
   $('#getContact').attr('disabled', true);
   $('#echo').attr('disabled', true);
+  $('#phones button').attr('disabled', true);
   $('#hangupCall').removeClass('d-none');
   $('#hangupCall').attr('disabled', false);
 }
