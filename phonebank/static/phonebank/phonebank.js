@@ -107,6 +107,9 @@ function telnyxConnect() {
 function telnyxDisconnect() {
   console.log('Disconnecting from Telnyx');
   telnyxClient.disconnect();
+  telnyxClient.off('telnyx.ready');
+  telnyxClient.off('telnyx.socket.close');
+  telnyxClient.off('telnyx.notification');
 }
 function handleNotification(notification) {
   switch (notification.type) {
