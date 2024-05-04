@@ -5,17 +5,4 @@
 {% block content %}
 <h1>500 Internal Server Error</h1>
 <p>Our team has been notified.</p>
-
-{% if sentry_event_id %}
-  <p>Error ID: {{ sentry_event_id }}</p>
-  <script
-    src="https://browser.sentry-cdn.com/7.108.0/bundle.min.js"
-    integrity="sha384-/4L19JIb3v6arzwh7HAi+GBry2i2N311UqAc7lQ5jz//z5PUfBkVlfhR/+JltqBd"
-    crossorigin="anonymous"
-  ></script>
-  <script>
-    Sentry.init({ dsn: '{{ sentry_dsn }}' });
-    Sentry.showReportDialog({ eventId: '{{ sentry_event_id }}' });
-  </script>
-{% endif %}
 {% endblock %}
