@@ -10,13 +10,13 @@ certifi==2024.7.4
     # via
     #   requests
     #   sentry-sdk
-cffi==1.16.0
+cffi==1.17.0
     # via pynacl
 charset-normalizer==3.3.2
     # via requests
 diff-match-patch==20230430
     # via django-import-export
-django==4.2.14
+django==4.2.15
     # via
     #   -r requirements.in
     #   django-import-export
@@ -31,7 +31,7 @@ django-mass-edit==3.5.0
     # via -r requirements.in
 django-phonenumber-field==8.0.0
     # via -r requirements.in
-gunicorn==22.0.0
+gunicorn==23.0.0
     # via -r requirements.in
 idna==3.7
     # via requests
@@ -39,7 +39,7 @@ markdown==3.6
     # via -r requirements.in
 packaging==24.1
     # via gunicorn
-phonenumberslite==8.13.40
+phonenumberslite==8.13.43
     # via -r requirements.in
 psycopg2==2.9.9
     # via -r requirements.in
@@ -53,7 +53,7 @@ requests==2.32.3
     # via
     #   -r requirements.in
     #   telnyx
-sentry-sdk==2.10.0
+sentry-sdk==2.13.0
     # via -r requirements.in
 six==1.16.0
     # via
