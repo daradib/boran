@@ -9,5 +9,4 @@ phonenumberslite
 psycopg2
 requests
 sentry-sdk
-six # required by telnyx
 telnyx
