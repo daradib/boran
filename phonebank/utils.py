@@ -1,3 +1,4 @@
+from json import JSONDecodeError
 from urllib.parse import quote_plus
 
 from django.apps import apps
@@ -62,10 +63,10 @@ def delete_telnyx_credential(credential_id):
     telnyx_credential = telnyx.TelephonyCredential.retrieve(credential_id)
     try:
         telnyx_credential.delete()
-    except telnyx.error.APIError as e:
-        # Raise errors other than HTTP 204, which appears intentional.
-        if 'HTTP response code was 204' not in e.user_message:
-            raise
+    except JSONDecodeError:
+        # Empty response cannot be parsed as JSON.
+        # https://github.com/team-telnyx/telnyx-python/issues/81
+        pass
 
 
 def delete_telnyx_credentials():
