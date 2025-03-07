@@ -37,7 +37,7 @@
       <div class="alerts"></div>
       <div class="row">
           <div class="col" id="formContainer">
-            <iframe id="form" src="{{ google_form_url }}?usp=pp_url&amp;embedded=true" width="100%" frameborder="0" marginheight="0" marginwidth="0" referrerpolicy="no-referrer">Loading…</iframe>
+            <iframe id="form" src="{{ form_url }}?kiosk=true&amp;ms=boran&amp;source=boran" width="100%" frameborder="0" marginheight="0" marginwidth="0" referrerpolicy="no-referrer">Loading…</iframe>
           </div>
           <div class="col-xl-3 col-lg-4 col-md-5">
             <div class="card">
@@ -113,7 +113,7 @@
     <script src="https://{{ jitsi_server }}/external_api.js"></script>
     <script>
       const agentName = '{{ agent_name }}';
-      const googleFormUrl = '{{ google_form_url }}';
+      const formUrl = '{{ form_url }}';
       const jitsiRoom = '{{ jitsi_room }}';
       const jitsiServer = '{{ jitsi_server }}';
     </script>

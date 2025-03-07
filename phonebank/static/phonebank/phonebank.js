@@ -1,6 +1,6 @@
 /*global
     $, libphonenumber, TelnyxWebRTC, JitsiMeetExternalAPI,
-    agentName, googleFormUrl, jitsiRoom, jitsiServer
+    agentName, formUrl, jitsiRoom, jitsiServer
 */
 /*jslint
     browser, devel, indent2, long, single
@@ -33,6 +33,7 @@ function getContact(id = '') {
   const urlParams = new URLSearchParams(window.location.search);
   const key = urlParams.get('key');
   const path = 'api/voter/' + (id && encodeURIComponent(id) + '/') + '?key=' + encodeURIComponent(key);
+  var phoneFormatted = '';
   var similarVotersPending = false;
   $('#phones button').attr('disabled', true);
   $('#getContact').attr('disabled', true);
@@ -57,7 +58,11 @@ function getContact(id = '') {
       if (phone[0] === '+') {
         const phoneNumber = parseInt(phone.substring(1));
         if (!Number.isNaN(phoneNumber)) {
-          $('#phones').append('<button type="button" class="btn btn-outline-primary btn-sm" onclick="connectAndCall(\'+' + phoneNumber + '\')" id="phone' + phoneNumber + '"><i class="fa ' + icon + '" aria-hidden="true"></i> <small>' + libphonenumber.parsePhoneNumberFromString('+' + phoneNumber).format('NATIONAL') + '</small></button>');
+          const phoneParsed = libphonenumber.parsePhoneNumberFromString('+' + phoneNumber);
+          if (phoneFormatted === '' && phonetype.includes('cell') && phoneParsed.country === 'US') {
+            phoneFormatted = phoneParsed.format('NATIONAL');
+          }
+          $('#phones').append('<button type="button" class="btn btn-outline-primary btn-sm" onclick="connectAndCall(\'+' + phoneNumber + '\')" id="phone' + phoneNumber + '"><i class="fa ' + icon + '" aria-hidden="true"></i> <small>' + phoneParsed.format('NATIONAL') + '</small></button>');
         }
       }
     });
@@ -80,7 +85,20 @@ function getContact(id = '') {
     // about leaving the site. If this alert is canceled by the user, the
     // form will erroneously remain filled with the previous voter.
     // So to preempt this alert, we overwrite the entire iframe element.
-    $("#formContainer").html('<iframe id="form" src="' + googleFormUrl + '?usp=pp_url&amp;entry.391576799=' + encodeURIComponent(api.voter.id) + '&amp;entry.1578854864=' + encodeURIComponent(Object.values(api.voter.phones).join(',')) + '&amp;entry.1498627907=' + encodeURIComponent(key) + '&amp;embedded=true' + '" width="100%" frameborder="0" marginheight="0" marginwidth="0" referrerpolicy="no-referrer">Loading…</iframe>');
+    $("#formContainer").html(
+      '<iframe id="form" src="'
+      + formUrl + '?kiosk=true&amp;ms=boran&amp;source=boran'
+      + '&amp;fn=' + encodeURIComponent(api.voter.first_name)
+      + '&amp;mn=' + encodeURIComponent(api.voter.middle_name)
+      + '&amp;ln=' + encodeURIComponent(api.voter.last_name)
+      + '&amp;add1=' + encodeURIComponent(api.voter.address)
+      + '&amp;pc=' + encodeURIComponent(api.voter.zip_code)
+      + '&amp;ci=' + encodeURIComponent(api.voter.city)
+      + '&amp;st=' + encodeURIComponent(api.voter.state)
+      + '&amp;em=' + encodeURIComponent(api.voter.email)
+      + '&amp;mp=' + encodeURIComponent(phoneFormatted)
+      + '" width="100%" frameborder="0" marginheight="0" marginwidth="0" referrerpolicy="no-referrer">Loading…</iframe>'
+    );
     $('#form').css('height', $(window).height() - 100);
     agentStats = api.agent_stats;
   }).fail(function (jqxhr) {

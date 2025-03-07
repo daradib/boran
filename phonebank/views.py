@@ -27,7 +27,7 @@ def phonebank_view(request):
         return HttpResponse('Invalid key parameter', status=401)
     return render(request, 'phonebank/index.html', {
         'nav_links': settings.SECRETS['NAV_LINKS'],
-        'google_form_url': settings.SECRETS['GOOGLE_FORM_URL'],
+        'form_url': settings.SECRETS['FORM_URL'],
         'jitsi_server': settings.SECRETS['JITSI_SERVER'],
         'jitsi_room': agent.room_name,
         'agent_name': agent.nickname,
