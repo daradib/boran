@@ -21,7 +21,7 @@ def get_agent(request):
 def phonebank_view(request):
     try:
         agent = get_agent(request)
-    except KeyError as e:
+    except KeyError:
         return HttpResponse('Missing key parameter', status=400)
     except Agent.DoesNotExist:
         return HttpResponse('Invalid key parameter', status=401)
@@ -38,7 +38,7 @@ def phonebank_view(request):
 def api_view(request, id=None):
     try:
         agent = get_agent(request)
-    except KeyError as e:
+    except KeyError:
         return HttpResponse('Missing key parameter', status=400)
     except Agent.DoesNotExist:
         return HttpResponse('Invalid key parameter', status=401)
