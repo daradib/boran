@@ -16,14 +16,14 @@ charset-normalizer==3.4.1
     # via requests
 diff-match-patch==20241021
     # via django-import-export
-django==4.2.19
+django==4.2.20
     # via
     #   -r requirements.in
     #   django-import-export
     #   django-localflavor
     #   django-mass-edit
     #   django-phonenumber-field
-django-import-export==4.3.5
+django-import-export==4.3.7
     # via -r requirements.in
 django-localflavor==4.0
     # via -r requirements.in
@@ -39,7 +39,7 @@ markdown==3.7
     # via -r requirements.in
 packaging==24.2
     # via gunicorn
-phonenumberslite==8.13.54
+phonenumberslite==9.0.0
     # via -r requirements.in
 psycopg2==2.9.10
     # via -r requirements.in
@@ -53,7 +53,7 @@ requests==2.32.3
     # via
     #   -r requirements.in
     #   telnyx
-sentry-sdk==2.21.0
+sentry-sdk==2.22.0
     # via -r requirements.in
 six==1.17.0
     # via telnyx
