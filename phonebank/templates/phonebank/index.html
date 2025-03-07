@@ -56,14 +56,13 @@
                 </div>
                 <div class="btn-group" id="phones">
                   <div class="alert alert-primary" role="alert">
-                    Before continuing, please place an echo test call to verify that your headphones and microphone are working correctly. You should be able to hear yourself speak once the call is active.
+                    Before continuing, please place a test call to verify that your headphones and microphone are working correctly.
                   </div>
                 </div>
                 <div id="similar_voters">
                 </div>
                 <span class="pull-right">
-                  <!-- Another echo test SIP URI address is sip:echo@iptel.org -->
-                  <button type="button" class="btn btn-secondary" onclick="connectAndCall('sip:4444@sip2sip.info')" id="echo" disabled="true">Echo test
+                  <button type="button" class="btn btn-secondary" onclick="connectAndCall('{{ test_phone }}')" id="echo" disabled="true">Test call
                     <i class="fa fa-phone" aria-hidden="true"></i>
                   </button>
                   <button type="button" class="btn btn-primary" onclick="getContact()" id="getContact" disabled="true">New contact

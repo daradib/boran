@@ -28,6 +28,7 @@ def phonebank_view(request):
     return render(request, 'phonebank/index.html', {
         'nav_links': settings.SECRETS['NAV_LINKS'],
         'form_url': settings.SECRETS['FORM_URL'],
+        'test_phone': settings.SECRETS['TEST_PHONE'],
         'jitsi_server': settings.SECRETS['JITSI_SERVER'],
         'jitsi_room': agent.room_name,
         'agent_name': agent.nickname,
