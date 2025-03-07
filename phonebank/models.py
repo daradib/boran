@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from django.db import models
 from django.urls import reverse
-from localflavor.us.models import USStateField
+from localflavor.us.models import USStateField, USZipCodeField
 import markdown
 from phonenumber_field.modelfields import PhoneNumberField
 
@@ -95,14 +95,18 @@ class TelnyxCredential(models.Model):
 
 class Voter(models.Model):
     id = models.SlugField(primary_key=True)
-    statename = USStateField()
-    name_last = models.CharField(max_length=127)
-    name_first = models.CharField(max_length=127)
-    name_middle = models.CharField(max_length=127, blank=True)
+    last_name = models.CharField(max_length=127)
+    first_name = models.CharField(max_length=127)
+    middle_name = models.CharField(max_length=127, blank=True)
     cell_phone_1 = PhoneNumberField(blank=True, db_index=True)
     cell_phone_2 = PhoneNumberField(blank=True, db_index=True)
     land_phone_1 = PhoneNumberField(blank=True, db_index=True)
     land_phone_2 = PhoneNumberField(blank=True, db_index=True)
+    email = models.EmailField(blank=True)
+    address = models.CharField(max_length=127, blank=True)
+    city = models.CharField(max_length=127, blank=True)
+    state = USStateField(blank=True)
+    zip_code = USZipCodeField(blank=True)
     notes = models.TextField(blank=True)
     priority = models.SmallIntegerField(default=0, db_index=True)
     provided_to = models.ForeignKey(
@@ -152,20 +156,24 @@ class Voter(models.Model):
             else:
                 query = models.Q(**{phone_field_name + '__in': phone_numbers})
         return Voter.objects.filter(query).exclude(id=self.id).order_by(
-            'name_last', 'name_first', 'id',
+            'last_name', 'first_name', 'id',
         )
 
     def to_name(self):
-        return self.name_last + ', ' + self.name_first
+        return self.last_name + ', ' + self.first_name
 
     def to_dict(self):
+        extra_fields = [
+            'id', 'last_name', 'first_name', 'middle_name',
+            'email', 'address', 'city', 'state', 'zip_code',
+        ]
         obj = {
-            'id': self.id,
-            'statename': self.statename,
             'name': self.to_name(),
             'notes': self.format_notes(),
             'provided': bool(self.provided_to_id),
         }
+        for field in extra_fields:
+            obj[field] = getattr(self, field)
         obj['phones'] = ({k: v.as_e164 for k, v in self.map_phones().items()})
         return obj
 

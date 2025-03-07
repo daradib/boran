@@ -39,7 +39,11 @@ function getContact(id = '') {
   $.getJSON(path, function (api) {
     $('#name').text(api.voter.name);
     $('#id').text('#' + api.voter.id);
-    $('#statename').text(api.voter.statename);
+    $('#email').text(api.voter.email);
+    $('#address').text(api.voter.address);
+    $('#city').text(api.voter.city);
+    $('#state').text(api.voter.state);
+    $('#zip_code').text(api.voter.zip_code);
     $('#notes').html(api.voter.notes);
     $('#phones').html('');
     Object.keys(api.voter.phones).forEach(function (phonetype) {

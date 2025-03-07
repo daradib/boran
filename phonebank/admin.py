@@ -103,18 +103,19 @@ class VoterResource(resources.ModelResource):
 class VoterAdmin(ImportExportActionModelAdmin):
     resource_class = VoterResource
     list_display = [
-        'id', 'statename', 'name_last', 'name_first', 'name_middle',
+        'id', 'last_name', 'first_name', 'middle_name', 'state',
         'priority', 'provided_to', 'provided_at',
     ]
     list_filter = [
         'priority',
         ('provided_to', admin.RelatedOnlyFieldListFilter),
-        ('statename', admin.AllValuesFieldListFilter),
+        ('state', admin.AllValuesFieldListFilter),
     ]
     date_hierarchy = 'provided_at'
     search_fields = [
-        'id', 'name_last', 'name_first', 'name_middle',
+        'id', 'last_name', 'first_name', 'middle_name',
         'cell_phone_1', 'cell_phone_2', 'land_phone_1', 'land_phone_2',
+        'email',
         'notes',
     ]
 
