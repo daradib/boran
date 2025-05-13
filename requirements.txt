@@ -6,17 +6,17 @@
 #
 asgiref==3.8.1
     # via django
-certifi==2025.1.31
+certifi==2025.4.26
     # via
     #   requests
     #   sentry-sdk
 cffi==1.17.1
     # via pynacl
-charset-normalizer==3.4.1
+charset-normalizer==3.4.2
     # via requests
 diff-match-patch==20241021
     # via django-import-export
-django==4.2.20
+django==4.2.21
     # via
     #   -r requirements.in
     #   django-import-export
@@ -29,17 +29,17 @@ django-localflavor==4.0
     # via -r requirements.in
 django-mass-edit==3.5.0
     # via -r requirements.in
-django-phonenumber-field==8.0.0
+django-phonenumber-field==8.1.0
     # via -r requirements.in
 gunicorn==23.0.0
     # via -r requirements.in
 idna==3.10
     # via requests
-markdown==3.7
+markdown==3.8
     # via -r requirements.in
-packaging==24.2
+packaging==25.0
     # via gunicorn
-phonenumberslite==9.0.0
+phonenumberslite==9.0.5
     # via -r requirements.in
 psycopg2==2.9.10
     # via -r requirements.in
@@ -47,13 +47,13 @@ pycparser==2.22
     # via cffi
 pynacl==1.5.0
     # via telnyx
-python-stdnum==1.20
+python-stdnum==2.0
     # via django-localflavor
 requests==2.32.3
     # via
     #   -r requirements.in
     #   telnyx
-sentry-sdk==2.22.0
+sentry-sdk==2.28.0
     # via -r requirements.in
 six==1.17.0
     # via telnyx
@@ -63,7 +63,7 @@ tablib==3.8.0
     # via django-import-export
 telnyx==2.1.5
     # via -r requirements.in
-urllib3==2.3.0
+urllib3==2.4.0
     # via
     #   requests
     #   sentry-sdk
