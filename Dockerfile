@@ -4,4 +4,4 @@ RUN mkdir /code && mkdir /code/data
 WORKDIR /code
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt
-COPY . /code/
+COPY --exclude=data --exclude=env . /code/
