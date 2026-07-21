@@ -6,7 +6,7 @@ django-phonenumber-field>=2.3
 gunicorn
 markdown
 phonenumberslite
-psycopg2
+psycopg2-binary
 requests
 sentry-sdk
 telnyx

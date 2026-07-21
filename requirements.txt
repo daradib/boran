@@ -58,7 +58,7 @@ packaging==26.2
     # via gunicorn
 phonenumberslite==9.0.32
     # via -r requirements.in
-psycopg2==2.9.12
+psycopg2-binary==2.9.12
     # via -r requirements.in
 pydantic==2.13.4
     # via telnyx
