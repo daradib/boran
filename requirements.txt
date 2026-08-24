@@ -4,7 +4,7 @@
 #
 #    pip-compile
 #
-annotated-types==0.7.0
+annotated-types==0.8.0
     # via pydantic
 anyio==4.14.2
     # via
@@ -12,19 +12,19 @@ anyio==4.14.2
     #   telnyx
 asgiref==3.12.1
     # via django
-certifi==2026.6.17
+certifi==2026.7.22
     # via
     #   httpcore
     #   httpx
     #   requests
     #   sentry-sdk
-charset-normalizer==3.4.9
+charset-normalizer==3.5.1
     # via requests
 diff-match-patch==20241021
     # via django-import-export
 distro==1.9.0
     # via telnyx
-django==5.2.16
+django==5.2.17
     # via
     #   -r requirements.in
     #   django-import-export
@@ -33,13 +33,13 @@ django==5.2.16
     #   django-phonenumber-field
 django-import-export==4.4.1
     # via -r requirements.in
-django-localflavor==5.0
+django-localflavor==5.1
     # via -r requirements.in
 django-mass-edit==3.5.0
     # via -r requirements.in
-django-phonenumber-field==8.4.0
+django-phonenumber-field==8.5.0
     # via -r requirements.in
-gunicorn==26.0.0
+gunicorn==26.2.0
     # via -r requirements.in
 h11==0.16.0
     # via httpcore
@@ -47,16 +47,14 @@ httpcore==1.0.9
     # via httpx
 httpx==0.28.1
     # via telnyx
-idna==3.18
+idna==3.19
     # via
     #   anyio
     #   httpx
     #   requests
-markdown==3.10.2
+markdown==3.10.3
     # via -r requirements.in
-packaging==26.2
-    # via gunicorn
-phonenumberslite==9.0.34
+phonenumberslite==9.0.37
     # via -r requirements.in
 psycopg2-binary==2.9.12
     # via -r requirements.in
@@ -68,15 +66,15 @@ python-stdnum==2.2
     # via django-localflavor
 requests==2.34.2
     # via -r requirements.in
-sentry-sdk==2.66.0
+sentry-sdk==2.68.1
     # via -r requirements.in
 sniffio==1.3.1
     # via telnyx
-sqlparse==0.5.5
+sqlparse==0.6.0
     # via django
-tablib==3.9.0
+tablib==3.10.0
     # via django-import-export
-telnyx==4.169.0
+telnyx==4.176.0
     # via -r requirements.in
 typing-extensions==4.16.0
     # via
@@ -84,7 +82,7 @@ typing-extensions==4.16.0
     #   pydantic-core
     #   telnyx
     #   typing-inspection
-typing-inspection==0.4.2
+typing-inspection==0.4.4
     # via pydantic
 urllib3==2.7.0
     # via
