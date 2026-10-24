@@ -6,38 +6,38 @@
 #
 annotated-types==0.8.0
     # via pydantic
-anyio==4.14.2
+anyio==4.15.1
     # via
     #   httpx
     #   telnyx
-asgiref==3.12.1
+asgiref==3.13.0
     # via django
-certifi==2026.7.22
+certifi==2026.10.23
     # via
     #   httpcore
     #   httpx
     #   requests
     #   sentry-sdk
-charset-normalizer==3.5.1
+charset-normalizer==3.5.2
     # via requests
 diff-match-patch==20241021
     # via django-import-export
 distro==1.9.0
     # via telnyx
-django==5.2.17
+django==5.2.18
     # via
     #   -r requirements.in
     #   django-import-export
     #   django-localflavor
     #   django-mass-edit
     #   django-phonenumber-field
-django-import-export==4.4.1
+django-import-export==4.4.3
     # via -r requirements.in
 django-localflavor==5.1
     # via -r requirements.in
 django-mass-edit==3.5.0
     # via -r requirements.in
-django-phonenumber-field==8.5.0
+django-phonenumber-field==9.0.0
     # via -r requirements.in
 gunicorn==26.2.0
     # via -r requirements.in
@@ -47,26 +47,26 @@ httpcore==1.0.9
     # via httpx
 httpx==0.28.1
     # via telnyx
-idna==3.19
+idna==3.20
     # via
     #   anyio
     #   httpx
     #   requests
-markdown==3.10.3
+markdown==3.11.2
     # via -r requirements.in
-phonenumberslite==9.0.37
+phonenumberslite==9.0.41
     # via -r requirements.in
-psycopg2-binary==2.9.12
+psycopg2-binary==2.9.13
     # via -r requirements.in
-pydantic==2.13.4
+pydantic==2.14.1
     # via telnyx
-pydantic-core==2.46.4
+pydantic-core==2.50.1
     # via pydantic
 python-stdnum==2.2
     # via django-localflavor
 requests==2.34.2
     # via -r requirements.in
-sentry-sdk==2.68.1
+sentry-sdk==2.73.0
     # via -r requirements.in
 sniffio==1.3.1
     # via telnyx
@@ -74,17 +74,18 @@ sqlparse==0.6.0
     # via django
 tablib==3.10.0
     # via django-import-export
-telnyx==4.176.0
+telnyx==4.189.0
     # via -r requirements.in
 typing-extensions==4.16.0
     # via
+    #   anyio
     #   pydantic
     #   pydantic-core
     #   telnyx
     #   typing-inspection
 typing-inspection==0.4.4
     # via pydantic
-urllib3==2.7.0
+urllib3==2.8.0
     # via
     #   requests
     #   sentry-sdk
